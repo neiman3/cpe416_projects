@@ -18,17 +18,18 @@
 #include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
+#include "helpers.c"
 
 int main(void) {
     init();
-    led_on(0);
-    led_on(1);
-    led_on(2);
-    clear_screen();
-    lcd_cursor(1,1);
-    print_num(0);
-    print_num(1);
-    while(1) {}
+    while(1) {
+        led_on(0);
+        led_on(1);
+        delay_ms(250);
+        led_off(0);
+        led_off(1);
+        delay_ms(250);
+    }
 }
 
 
