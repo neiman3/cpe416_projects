@@ -29,7 +29,7 @@ int main(void) {
             // led 0, led 1 for loop
             print_num(led);
             print_num(9);
-            for (uint8_t brightness=0; brightness<=255; brightness++) {
+            for (uint8_t brightness=0; brightness<255; brightness++) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
                 blocking_pwm(brightness, 25, led);
             }
