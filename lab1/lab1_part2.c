@@ -24,9 +24,9 @@
     read button to pick string, loop thru chars in string with delay
 */
 
-void main() {
+int main(void) {
     init();
-    digital_dir(PIN_BUTTON, 0) // 0 for input- init io
+    digital_dir(PIN_BUTTON, 0); // 0 for input- init io
 
     // start with base string
     // we would want an array of strings (all possible names/display texts) that we could iterate through
@@ -44,7 +44,7 @@ void main() {
     uint8_t user_selection = 0;
 
 
-    while(true) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
+    while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
 
         timer++; // increment the timer
         
@@ -90,7 +90,7 @@ void main() {
 
 // This function should take pointer to two string and modify them in memory accordingly.
 // Need to check the syntax for that- as the following ois not correct
-void slice_string(*base_string, *destination_string, uint8_t index, uint8_t num_chars) {
+void slice_string(base_string, destination_string, uint8_t index, uint8_t num_chars) {
     for (character=0; character<(num_chars); character++){
         destination_string[character] = base_string[character + index];
     }

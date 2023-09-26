@@ -24,7 +24,7 @@
     read button to pick string, loop thru chars in string with delay
 */
 
-void main() {
+int main(void) {
     init();
     digital_dir(PIN_BUTTON, 0) // 0 for input- init io
 
