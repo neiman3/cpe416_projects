@@ -27,11 +27,11 @@ void main() {
             // led 0, led 1 for loop
             for (uint8_t brightness=0; brightness<256; brightness++) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
-                blocking_pwm(brightness, 1000, 0);
+                blocking_pwm(brightness, 255, 0);
             }
             for (uint8_t brightness=255; brightness>0; brightness--) {
                 // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
-                blocking_pwm(brightness, 4000, 1);
+                blocking_pwm(brightness, 255, 1);
             }
             
             // delay between leds
