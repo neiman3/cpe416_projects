@@ -90,7 +90,7 @@ int main(void) {
 
 // This function should take pointer to two string and modify them in memory accordingly.
 // Need to check the syntax for that- as the following ois not correct
-void slice_string(base_string, destination_string, uint8_t index, uint8_t num_chars) {
+void slice_string(u08 base_string,  u08 destination_string, uint8_t index, uint8_t num_chars) {
     for (character=0; character<(num_chars); character++){
         destination_string[character] = base_string[character + index];
     }
