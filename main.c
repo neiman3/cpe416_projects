@@ -61,11 +61,17 @@ int main(void) {
 
 
         button_value = get_btn();
+        //DEBUG
         lcd_cursor(0,1);
         print_num(button_value);
+        //DEBUG
+        lcd_cursor(1,1);
+        print_num(button_press_flag);
         if (button_value) {
             // button was pressed
             if (!button_press_flag) {
+                lcd_cursor(2,1);
+                print_string("b");
                 // user has just pressed the button
                 button_press_flag = 1;
                 update_flag = 1;
@@ -73,6 +79,8 @@ int main(void) {
             }
         } else {
             if (button_press_flag) {
+                lcd_cursor(2,1);
+                print_string(" ");
                 // user has let go of the button
                 button_press_flag = 0;
                 delay_ms(50);
