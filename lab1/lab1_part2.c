@@ -8,11 +8,6 @@
  * @copyright Copyright (c) 2023
  * 
  * 
- * For part 1, write a program that gradually fades LED0 on and then off.  
- * Then, it should do the same with LED1 and then the program should repeat.  The fading effect should be smooth and without flicker.
- * 
- * You can make an LED appear partially on by turning the LED on and off in rapid succession.
- * 
  */
 
 #include "../library/globals.h"
@@ -22,15 +17,62 @@
 
 #include "../helpers.c"
 
+
+#define DELAY_TIME_MS 200
+#define PIN_BUTTON 1
+
 /*
     read button to pick string, loop thru chars in string with delay
 */
 
 void main() {
+    init();
+    digital_dir(PIN_BUTTON, 0) // 0 for input- init io
+
+    // start with base string
+    // we would want an array of strings (all possible names/display texts) that we could iterate through
+
+    // working variables
     uint8_t text[14] = "Hello world";
     uint8_t slice[7];
-    while(true) {
-        slice_string(*text, *slice, 0, 7)
+    uint8_t button_value;
+
+    // flags and couters
+    uint8_t timer = 0; //inidialite timer to zero
+    uint8_t update_flag = 1;
+    uint8_t button_press_flag = 0;
+
+
+    while(true) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
+
+        timer++; // increment the timer
+        
+        if (timer >= DELAY_TIME_MS) { // Timer exceeded
+            // reset timer and flag for an update of the LCD
+            timer = 0;
+            update_flag = 1;
+        }
+
+
+
+        button_value = digital(PIN_BUTTON);
+        if (button_value) {
+            // button was pressed
+            if (!button_press_flag) {
+                // user has just pressed the button
+                button_press_flag = 1;
+                update_flag = 1;
+            }
+        }
+        // poll IO for button press
+            // while button pressed- raise ignore flag that will not change string until button goes low
+            // else clear flag
+
+
+        if (update_flag) {
+            slice_string(*text, *slice, 0, 7);
+            update_flag = 0;
+        }
     }
 }
 

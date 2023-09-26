@@ -20,7 +20,7 @@
 #include <avr/io.h>
 #include "../helpers.c"
 
-void main() {
+int main(void) {
     init();
     led_on(0);
     led_on(1);

@@ -1,6 +1,7 @@
-#include "../library/globals.h"
+#include "./library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
+
 
 void delay_us(uint16_t delay_length) {
     // delay with parameter in mocroseconds
