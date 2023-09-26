@@ -38,7 +38,7 @@ int main(void) {
     uint8_t button_value;
 
     // flags and couters
-    uint8_t timer = 0; //inidialite timer to zero
+    u16 timer = 0; //inidialite timer to zero
     uint8_t update_flag = 1;
     uint8_t button_press_flag = 0;
     uint8_t user_selection = 0;
