@@ -83,7 +83,7 @@ int main(void) {
             // slice the string and display
             // get string from user name variables
             lcd_cursor(0,0);
-            print_string(slice);
+            print_string(text + scroll_position);
             update_flag = 0;
 
         }
