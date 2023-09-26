@@ -41,6 +41,7 @@ void main() {
     uint8_t timer = 0; //inidialite timer to zero
     uint8_t update_flag = 1;
     uint8_t button_press_flag = 0;
+    uint8_t user_selection = 0;
 
 
     while(true) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
@@ -63,15 +64,23 @@ void main() {
                 button_press_flag = 1;
                 update_flag = 1;
             }
+        } else {
+            if (button_press_flag) {
+                // user has let go of the button
+                button_press_flag = 0;
+                delay_ms(50);
+            }
         }
-        // poll IO for button press
-            // while button pressed- raise ignore flag that will not change string until button goes low
-            // else clear flag
 
 
         if (update_flag) {
+            // slice the string and display
+            // get string from user name variables
             slice_string(*text, *slice, 0, 7);
+            lcd_cursor(0,0);
+            print_string(*slice);
             update_flag = 0;
+
         }
     }
 }
