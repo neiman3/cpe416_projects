@@ -22,25 +22,20 @@
 
 int main(void) {
     init();
-    print_num(0);
+    print_string("Lab 1");
+    lcd_cursor(0,1);
+    print_string("Part 1");
     while(1) {
-        print_num(9);
         for (uint8_t led=0; led<2; led++) {
             // led 0, led 1 for loop
-            print_num(led);
-            print_num(9);
             for (uint8_t brightness=0; brightness<255; brightness++) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
                 blocking_pwm(brightness, 10, led);
             }
-            print_num(2);
             for (uint8_t brightness=255; brightness>0; brightness--) {
                 // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
                 blocking_pwm(brightness, 40, led);
             }
-            print_num(3);
-
-            
             // delay between leds
             delay_ms(500);
         }
