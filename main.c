@@ -67,6 +67,9 @@ int main(void) {
                 button_press_flag = 1;
                 update_flag = 1;
                 user_selection++;
+                if(user_selection>1) {
+                    user_selection = 0;
+                }
                 update_text(user_selection, text);
             }
         } else {
