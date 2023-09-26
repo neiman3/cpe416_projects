@@ -20,24 +20,28 @@
 #include <avr/io.h>
 #include "../helpers.c"
 
-void main() {
+int main() {
+    u16 period_us = 1000;
+
     init();
-    while(true) {
-        for (uint8_t led=0; led<2; led++) {
+    while(1) {
+        for (u08 pin=LED0_PIN; pin<=LED1_PIN; pin++) {
             // led 0, led 1 for loop
             for (uint8_t brightness=0; brightness<256; brightness++) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
-                blocking_pwm(brightness, 1000, pin);
+                blocking_pwm(brightness, period_us, pin);
             }
             for (uint8_t brightness=255; brightness>0; brightness--) {
                 // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
-                blocking_pwm(brightness, 4000, pin);
+                blocking_pwm(brightness, 4*period_us, pin);
             }
             
             // delay between leds
-            delay_ms(500);
+            _delay_ms(500);
         }
     }
+
+    return 0;
 }
 
 

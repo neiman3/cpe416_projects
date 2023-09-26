@@ -26,8 +26,8 @@
 */
 
 void main() {
-    u08 text[14] = "Hello world";
-    u08 slice[7];
+    uint8_t text[14] = "Hello world";
+    uint8_t slice[7];
     while(true) {
         slice_string(*text, *slice, 0, 7)
     }
