@@ -100,7 +100,7 @@ void update_text(u08 user_number, char* result) {
     // result is a  25 char string
     switch (user_number)
     {
-    case 1:
+    case 0:
         result = " Alex Neiman             ";
         break;
     
