@@ -26,7 +26,6 @@
 
 int main(void) {
     init();
-    digital_dir(PIN_BUTTON, 0); // 0 for input- init io
 
     // start with base string
     // we would want an array of strings (all possible names/display texts) that we could iterate through
@@ -56,7 +55,7 @@ int main(void) {
 
 
 
-        button_value = digital(PIN_BUTTON);
+        button_value = get_btn()
         if (button_value) {
             // button was pressed
             if (!button_press_flag) {
@@ -80,13 +79,17 @@ int main(void) {
             user_selection++;
             lcd_cursor(0,0);
             print_num(user_selection);
+            print_string("   ");
+            lcd_cursor(0,1);
+            print_num(timer);
+            print_string("   ");
             // print_string(*slice);
             update_flag = 0;
 
         }
     }
 
-    _delay_ms(1);
+    _delay_ms(10);
 }
 
 
