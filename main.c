@@ -28,7 +28,7 @@ int main(void) {
     lcd_cursor(1,1);
     print_num(0);
     print_num(1);
-    while(true) {}
+    while(1) {}
 }
 
 
