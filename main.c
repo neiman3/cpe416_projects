@@ -8,54 +8,90 @@
  * @copyright Copyright (c) 2023
  * 
  * 
- * For part 1, write a program that gradually fades LED0 on and then off.  
- * Then, it should do the same with LED1 and then the program should repeat.  The fading effect should be smooth and without flicker.
- * 
- * You can make an LED appear partially on by turning the LED on and off in rapid succession.
- * 
  */
 
 #include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
-#include "../helpers.c"
+#include <avr/interrupt.h>
 
-int main(void) {
+#include "helpers.c"
+
+
+#define DELAY_TIME_MS 2000
+#define PIN_BUTTON 0
+/*
+    read button to pick string, loop thru chars in string with delay
+*/
+
+void main() {
     init();
-    print_string("Lab 1");
-    lcd_cursor(0,1);
-    print_string("Part 1");
-    while(1) {
-        for (uint8_t led=0; led<2; led++) {
-            // led 0, led 1 for loop
-            for (uint8_t brightness=0; brightness<255; brightness++) {
-                // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
-                blocking_pwm(brightness, 10, led);
+    digital_dir(PIN_BUTTON, 0) // 0 for input- init io
+
+    // start with base string
+    // we would want an array of strings (all possible names/display texts) that we could iterate through
+    // OR a function that just contains a switch case statement that can write string based on an index value
+
+    // working variables
+    uint8_t text[14] = "Hello world";
+    uint8_t slice[7];
+    uint8_t button_value;
+
+    // flags and couters
+    uint8_t timer = 0; //inidialite timer to zero
+    uint8_t update_flag = 1;
+    uint8_t button_press_flag = 0;
+    uint8_t user_selection = 0;
+
+
+    while(true) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
+
+        timer++; // increment the timer
+        
+        if (timer >= DELAY_TIME_MS) { // Timer exceeded
+            // reset timer and flag for an update of the LCD
+            timer = 0;
+            update_flag = 1;
+        }
+
+
+
+        button_value = digital(PIN_BUTTON);
+        if (button_value) {
+            // button was pressed
+            if (!button_press_flag) {
+                // user has just pressed the button
+                button_press_flag = 1;
+                update_flag = 1;
             }
-            delay_ms(200);
-            for (uint8_t brightness=255; brightness>0; brightness--) {
-                // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
-                blocking_pwm(brightness, 40, led);
+        } else {
+            if (button_press_flag) {
+                // user has let go of the button
+                button_press_flag = 0;
+                delay_ms(50);
             }
-            // delay between leds
-            delay_ms(500);
+        }
+
+
+        if (update_flag) {
+            // slice the string and display
+            // get string from user name variables
+            // slice_string(*text, *slice, 0, 7);
+            user_selection++;
+            lcd_cursor(0,0);
+            print_num(user_selection);
+            // print_string(*slice);
+            update_flag = 0;
+
         }
     }
 }
 
 
-/*
-
-while true
-    function blink(pin1)
-    finction blink(pin2)
-
-
-    --> blink(pin):
-        for loop 0->255
-            pwm brightness
-
-
-
-
-*/
+// This function should take pointer to two string and modify them in memory accordingly.
+// Need to check the syntax for that- as the following ois not correct
+void slice_string(*base_string, *destination_string, uint8_t index, uint8_t num_chars) {
+    for (character=0; character<(num_chars); character++){
+        destination_string[character] = base_string[character + index];
+    }
+}

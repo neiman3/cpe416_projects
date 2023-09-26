@@ -15,12 +15,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "../helpers.c"
+#include "helpers.c"
 
 
-#define DELAY_TIME_MS 200
-#define PIN_BUTTON 1
-
+#define DELAY_TIME_MS 2000
+#define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
 */
@@ -31,6 +30,7 @@ void main() {
 
     // start with base string
     // we would want an array of strings (all possible names/display texts) that we could iterate through
+    // OR a function that just contains a switch case statement that can write string based on an index value
 
     // working variables
     uint8_t text[14] = "Hello world";
@@ -76,9 +76,11 @@ void main() {
         if (update_flag) {
             // slice the string and display
             // get string from user name variables
-            slice_string(*text, *slice, 0, 7);
+            // slice_string(*text, *slice, 0, 7);
+            user_selection++;
             lcd_cursor(0,0);
-            print_string(*slice);
+            print_num(user_selection);
+            // print_string(*slice);
             update_flag = 0;
 
         }
