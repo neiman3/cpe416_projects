@@ -61,6 +61,8 @@ int main(void) {
 
 
         button_value = get_btn();
+        lcd_cursor(0,1);
+        print_num(button_value);
         if (button_value) {
             // button was pressed
             if (!button_press_flag) {
