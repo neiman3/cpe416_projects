@@ -87,7 +87,7 @@ int main(void) {
             update_flag = 0;
 
         }
-        _delay_ms(10);
+        _delay_ms(1);
     }
 
     
