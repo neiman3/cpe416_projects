@@ -67,6 +67,7 @@ int main(void) {
                 // user has just pressed the button
                 button_press_flag = 1;
                 update_flag = 1;
+                lcd_cursor(1,0); print_num(0);
             }
         } else {
             if (button_press_flag) {
