@@ -22,6 +22,14 @@
 
 void main() {
     init();
+    led_on(0);
+    led_on(1);
+    led_on(2);
+    clear_screen();
+    lcd_cursor(1,1);
+    print_num(0);
+    print_num(1);
+    while(true) {}
     while(true) {
         for (uint8_t led=0; led<2; led++) {
             // led 0, led 1 for loop
