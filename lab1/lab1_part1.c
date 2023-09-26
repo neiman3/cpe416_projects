@@ -32,7 +32,8 @@ int main(void) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
                 blocking_pwm(brightness, 10, led);
             }
-            delay_ms(200);
+            led_on(led)
+            delay_ms(100);
             for (uint8_t brightness=255; brightness>0; brightness--) {
                 // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
                 blocking_pwm(brightness, 40, led);
