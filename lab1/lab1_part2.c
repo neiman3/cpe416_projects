@@ -55,7 +55,7 @@ int main(void) {
 
 
 
-        button_value = get_btn()
+        button_value = get_btn();
         if (button_value) {
             // button was pressed
             if (!button_press_flag) {
