@@ -67,6 +67,7 @@ int main(void) {
                 button_press_flag = 1;
                 update_flag = 1;
                 user_selection++;
+                update_text(user_selection, text);
             }
         } else {
             if (button_press_flag) {
@@ -95,3 +96,19 @@ int main(void) {
     
 }
 
+void update_text(u08 user_number, char* result) {
+    // result is a  25 char string
+    switch (user_number)
+    {
+    case 1:
+        result = " Alex Neiman             ";
+        break;
+    
+    case 1:
+        result = " Beck                    ";
+        break;
+    
+    default:
+        result = "error                    ";
+    }
+}
