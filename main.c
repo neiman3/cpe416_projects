@@ -18,7 +18,7 @@
 #include "helpers.c"
 
 
-#define DELAY_TIME_MS 2000
+#define DELAY_TIME_MS 200
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
