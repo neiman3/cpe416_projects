@@ -1,6 +1,7 @@
 #include "./library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
+#include <string.h>
 
 
 void delay_us(uint16_t delay_length) {
@@ -29,4 +30,9 @@ void blocking_pwm(uint8_t duty_cycle, uint16_t period_ms, uint8_t pin) {
         return;
     }
     
+}
+
+void slice_string(const char* base, char* slice_result, u08 start_index, u08 end_index) {
+    // modifies the string
+    strncpy(slice_result, base + start_index, end_index - start_index);
 }

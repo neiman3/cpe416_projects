@@ -32,12 +32,13 @@ int main(void) {
     // OR a function that just contains a switch case statement that can write string based on an index value
 
     // working variables
-    uint8_t text[14] = "Hello world";
+    uint8_t text[14] = "       Hello world      "; // 24 chars
     uint8_t slice[7];
     uint8_t button_value;
 
     // flags and couters
     u16 timer = 0; //inidialite timer to zero
+    u08 scroll_position = 0;
     uint8_t update_flag = 1;
     uint8_t button_press_flag = 0;
     uint8_t user_selection = 0;
@@ -50,6 +51,10 @@ int main(void) {
         if (timer >= DELAY_TIME_MS) { // Timer exceeded
             // reset timer and flag for an update of the LCD
             timer = 0;
+            scroll_position++;
+            if (scroll_position > 17) {
+                scroll_position = 0;
+            }
             update_flag = 1;
         }
 
@@ -73,17 +78,11 @@ int main(void) {
 
 
         if (update_flag) {
+            slice_string(text, slice, scroll_position, scroll_position + 7);
             // slice the string and display
             // get string from user name variables
-            // slice_string(*text, *slice, 0, 7);
-            user_selection++;
             lcd_cursor(0,0);
-            print_num(user_selection);
-            print_string("   ");
-            lcd_cursor(0,1);
-            print_num(timer);
-            print_string("   ");
-            // print_string(*slice);
+            print_string(slice);
             update_flag = 0;
 
         }
