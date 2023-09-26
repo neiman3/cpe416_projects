@@ -32,7 +32,7 @@ int main(void) {
     // OR a function that just contains a switch case statement that can write string based on an index value
 
     // working variables
-    const char text[25] = "       Hello world       "; // 24 chars
+    char text[25] = "       Hello world       "; // 24 chars
     uint8_t slice[7];
     uint8_t button_value;
 
