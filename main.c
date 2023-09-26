@@ -71,6 +71,7 @@ int main(void) {
                     user_selection = 0;
                 }
                 update_text(user_selection, text);
+                lcd_cursor(0,1); print_string(text);
             }
         } else {
             if (button_press_flag) {
@@ -83,7 +84,6 @@ int main(void) {
 
         if (update_flag) {
             // do all grapics update here
-            slice_string(text, slice, scroll_position, scroll_position + 7);
             // slice the string and display
             // get string from user name variables
             lcd_cursor(0,0);
