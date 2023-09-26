@@ -20,7 +20,7 @@
 #include <avr/io.h>
 #include "../helpers.c"
 
-void main() {
+int main(void) {
     init();
     while(1) {
         for (uint8_t led=0; led<2; led++) {
