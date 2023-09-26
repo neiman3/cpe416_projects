@@ -20,10 +20,15 @@ void blocking_pwm(uint8_t duty_cycle, uint16_t period_ms, uint8_t pin) {
     // on time = period * duty cycle / 255
     // off time = period - on time
     // delay on_time
-    uint16_t on_time = period_ms * duty_cycle / 255;
-    led_on(pin);
-    delay_us(on_time);
-    led_off(pin);
-    delay_us(period_ms - on_time);
-    return;
+    for (uint8_t i=0; i<100; i++){
+        for (uint8_t j=0; j<10; j++) {
+            uint16_t on_time = period_ms * duty_cycle / 255;
+            led_on(pin);
+            delay_us(on_time);
+            led_off(pin);
+            delay_us(period_ms - on_time);
+            return;
+        }
+    }
+    
 }
