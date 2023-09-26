@@ -22,17 +22,22 @@
 
 int main(void) {
     init();
+    print_num(0);
     while(1) {
         for (uint8_t led=0; led<2; led++) {
             // led 0, led 1 for loop
+            print_num(1);
             for (uint8_t brightness=0; brightness<256; brightness++) {
                 // fade up- 256 levels, 256ms fade time so f=1khz -> period=1ms
                 blocking_pwm(brightness, 25, 0);
             }
+            print_num(2);
             for (uint8_t brightness=255; brightness>0; brightness--) {
                 // fade down- 256 levels, 1000ms fade time so f=250 -> period=4ms
                 blocking_pwm(brightness, 25, 1);
             }
+            print_num(3);
+
             
             // delay between leds
             delay_ms(500);
