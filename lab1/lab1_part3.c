@@ -16,7 +16,7 @@ Description: Pong game with LED blinking
 #include "helpers.c"
 
 
-#define DELAY_TIME_MS 200
+#define DELAY_TIME_MS 250
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
