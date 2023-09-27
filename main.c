@@ -18,7 +18,7 @@
 #include "helpers.c"
 
 
-#define DELAY_TIME_MS 150
+#define DELAY_TIME_MS 200
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
@@ -88,7 +88,6 @@ int main(void) {
                     user_selection = 0;
                 }
                 update_text(user_selection, text);
-                lcd_cursor(0,1); print_string(text);
             }
         } else {
             if (button_press_flag) {
