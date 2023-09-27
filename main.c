@@ -40,7 +40,6 @@ void update_text(u08 user_number, char* result) {
 }
 
 int main(void) {
-    init();
 
     // start with base string
     // we would want an array of strings (all possible names/display texts) that we could iterate through
@@ -48,7 +47,6 @@ int main(void) {
 
     // working variables
     char text[25] = "       Hello world       "; // 24 chars
-    uint8_t slice[7];
     uint8_t button_value;
 
     // flags and couters
@@ -58,6 +56,9 @@ int main(void) {
     uint8_t button_press_flag = 0;
     uint8_t user_selection = 0;
 
+    // any init here
+    init();
+    update_text(user_selection, text);
 
     while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
 
