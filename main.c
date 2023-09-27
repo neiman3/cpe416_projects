@@ -1,13 +1,11 @@
 /*/**
- * @file lab1_part1.c
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2023-09-25
  * 
- * @copyright Copyright (c) 2023
- * 
- * 
+
+Name:  Alex Neiman and Beck Dehlsen
+Lab 1 part 2
+
+Description: Text scrolling with string manipulation and non-blocking program flow for AVR MCU
+
  */
 
 #include "../library/globals.h"

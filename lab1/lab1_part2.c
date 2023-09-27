@@ -1,13 +1,11 @@
 /*/**
- * @file lab1_part1.c
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2023-09-25
  * 
- * @copyright Copyright (c) 2023
- * 
- * 
+
+Name:  Alex Neiman and Beck Dehlsen
+Lab 1 part 2
+
+Description: Text scrolling with string manipulation and non-blocking program flow for AVR MCU
+
  */
 
 #include "../library/globals.h"
@@ -18,11 +16,28 @@
 #include "helpers.c"
 
 
-#define DELAY_TIME_MS 2000
+#define DELAY_TIME_MS 200
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
 */
+
+void update_text(u08 user_number, char* result) {
+    // result is a  25 char string
+    switch (user_number)
+    {
+    case 0:
+        strcpy(result, "       Alex Neiman       ");
+        break;
+    
+    case 1:
+        strcpy(result, "       Beck Dehlsen      ");
+        break;
+    
+    default:
+        strcpy(result, "error                    ");
+    }
+}
 
 int main(void) {
     init();
@@ -32,7 +47,7 @@ int main(void) {
     // OR a function that just contains a switch case statement that can write string based on an index value
 
     // working variables
-    uint8_t text[14] = "       Hello world      "; // 24 chars
+    char text[25] = "       Hello world       "; // 24 chars
     uint8_t slice[7];
     uint8_t button_value;
 
@@ -64,9 +79,13 @@ int main(void) {
         if (button_value) {
             // button was pressed
             if (!button_press_flag) {
-                // user has just pressed the button
                 button_press_flag = 1;
                 update_flag = 1;
+                user_selection++;
+                if(user_selection>1) {
+                    user_selection = 0;
+                }
+                update_text(user_selection, text);
             }
         } else {
             if (button_press_flag) {
@@ -78,11 +97,11 @@ int main(void) {
 
 
         if (update_flag) {
-            slice_string(text, slice, scroll_position, scroll_position + 7);
+            // do all grapics update here
             // slice the string and display
             // get string from user name variables
             lcd_cursor(0,0);
-            print_string(slice);
+            print_string(text + scroll_position);
             update_flag = 0;
 
         }
