@@ -18,7 +18,7 @@
 #include "helpers.c"
 
 
-#define DELAY_TIME_MS 200
+#define DELAY_TIME_MS 150
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
@@ -29,11 +29,11 @@ void update_text(u08 user_number, char* result) {
     switch (user_number)
     {
     case 0:
-        strcpy(result, " Alex Neiman             ");
+        strcpy(result, "       Alex Neiman       ");
         break;
     
     case 1:
-        strcpy(result, " Beck                    ");
+        strcpy(result, "       Beck Dehlsen      ");
         break;
     
     default:
