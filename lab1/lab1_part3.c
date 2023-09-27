@@ -88,6 +88,7 @@ int main(void) {
             // LED position update here
             time_next_led_update = timer + delay_time;
             // Turn off old LED
+            // Turn on new LED
             display_position(game_position);
             // reset update flag
             update_flag=0;
@@ -107,7 +108,10 @@ int main(void) {
 
 
 
-void check_direction(u08 current_position, u08 current_direction) {
+int check_direction(u08 current_position, u08 current_direction) {
+    // Check position and direction
+    // If it returns 1, it's a valid condition for the user to switch directions
+    // if it returns zero, fon't change direction
     switch (current_direction)
     {
     case 0: // traveling left
