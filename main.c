@@ -29,15 +29,15 @@ void update_text(u08 user_number, char* result) {
     switch (user_number)
     {
     case 0:
-        result = " Alex Neiman             ";
+        strcpy(result, " Alex Neiman             ");
         break;
     
     case 1:
-        result = " Beck                    ";
+        strcpy(result, " Beck                    ");
         break;
     
     default:
-        result = "error                    ";
+        strcpy(result, "error                    ");
     }
 }
 
