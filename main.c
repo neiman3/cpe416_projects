@@ -24,6 +24,23 @@
     read button to pick string, loop thru chars in string with delay
 */
 
+void update_text(u08 user_number, char* result) {
+    // result is a  25 char string
+    switch (user_number)
+    {
+    case 0:
+        result = " Alex Neiman             ";
+        break;
+    
+    case 1:
+        result = " Beck                    ";
+        break;
+    
+    default:
+        result = "error                    ";
+    }
+}
+
 int main(void) {
     init();
 
@@ -99,19 +116,3 @@ int main(void) {
     
 }
 
-void update_text(u08 user_number, char* result) {
-    // result is a  25 char string
-    switch (user_number)
-    {
-    case 0:
-        result = " Alex Neiman             ";
-        break;
-    
-    case 1:
-        result = " Beck                    ";
-        break;
-    
-    default:
-        result = "error                    ";
-    }
-}
