@@ -130,6 +130,7 @@ int check_direction(u08 current_position, u08 current_direction) {
 }
 
 void display_position(u08 led) {
+    // TODO: Simplify IO writes so that it only writes previous IO and current IO instead of writing to all
     // 0-4 will turn on JUST that IO pin and turn off the other ones
     // 5 will turn them all off
     // 6 will turn them all on
