@@ -104,8 +104,6 @@ int main(void) {
             // get string from user name variables
             lcd_cursor(0,0);
             print_string(text + scroll_position);
-            lcd_cursor(0,1);
-            print_num(user_selection);
             update_flag = 0;
 
         }
