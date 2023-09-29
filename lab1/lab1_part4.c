@@ -25,7 +25,7 @@
 
 #define DELAY_TIME_BASE 1000
 #define DELAY_TIME_MULTIPLIER 15 // ms per bit (accel output)
-#define DEAD_ZONE 3 // multiply by 2 to get total dead zone
+#define DEAD_ZONE 10 // multiply by 2 to get total dead zone
 #define ACCEL_CENTER 128
 
 void print_string_wrapping(char *string, u08 base_pos_x, u08 base_pos_y) {
@@ -102,26 +102,25 @@ int main(void) {
 
         }
         if (timer > update_time_y) {
+            // Make a visually pleasing simple motion for y
             // read accel yes it's y axis for x
             accel_read = 128 - get_accel_x();
             // calculate direction
             if (accel_read < (ACCEL_CENTER - DEAD_ZONE)) {
-                // its pointing in negative direction
-                dir_y = -1;
+                // its pointing in top direction
+                pos_y = 0;
             } else if (accel_read > (ACCEL_CENTER + DEAD_ZONE)) 
             {
-                // pointing in positive
-                dir_y = 1;
+                // pointing down
+                pos_y = 1;
             } else {
-                // it's in the dead zone
-                dir_y = 0;
+                // it's in the dead zone- leave unchanged
             }
 
             update_time_y = timer + (DELAY_TIME_BASE - DELAY_TIME_MULTIPLIER * dir_x * (accel_read - 128));
             // calculate magnitude and update update time x
             
             // update pos x based on direction
-            pos_y = pos_y + dir_y;
             update = 1;
 
         }
