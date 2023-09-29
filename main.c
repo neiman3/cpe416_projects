@@ -128,7 +128,7 @@ int main(void) {
                     update_flag = 1;
                     delay_time = (u16)(delay_time - (delay_time * 5 / 100));
                 } else {
-                    delay_time = (u16)(delay_time - (delay_time * 1 / 100));
+                    delay_time = (u16)(delay_time - (delay_time * 2 / 100));
                 }
 
             }
