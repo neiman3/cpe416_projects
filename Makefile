@@ -36,7 +36,7 @@ program_windows:
 	avrdude -F -pm645 -Pcom4 -carduino -u -U flash:w:main.hex
 
 #edit the device to match the device on your computer
-MAC_DEVICE = `ls /dev/cu.usbmodem11401`
+MAC_DEVICE = `ls /dev/cu.usbmodem1401`
 flash: main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex
 

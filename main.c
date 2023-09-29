@@ -22,22 +22,17 @@ Description: Pong game with LED blinking
     read button to pick string, loop thru chars in string with delay
 */
 
-// constant global LUT
-const u08 pin_lut[6] = {DIGITAL0_PIN, DIGITAL1_PIN, DIGITAL2_PIN, DIGITAL3_PIN, DIGITAL4_PIN, DIGITAL5_PIN};
-
-
-
 u08 check_direction(u08 current_position, u08 current_direction) {
     // Check position and direction
     // If it returns 1, it's a valid condition for the user to switch directions
     // if it returns zero, fon't change direction
     switch (current_direction)
     {
-    case 0: // traveling left
+    case 1: // traveling left
         if (current_position == 5) {
             return 1;
         }
-    case 1:
+    case -1:
         if (current_position == 0) {
             return 1;
         }
@@ -57,10 +52,10 @@ void display_position(u08 led) {
     if (led==6) {
         led_override = 1;
     }
-    for (u08 pin=0; pin<4; pin++) {
+    for (u08 pin=0; pin<5; pin++) {
         // turn on the LED pin if the current pin is equal to the serlected display position
         // or, if they all should be on, turn on every LED
-        digital_out(pin_lut[pin], ((pin==led) || led_override));
+        digital_out(pin, ((pin==led) || led_override));
     }
     return;
 }
@@ -68,10 +63,10 @@ void display_position(u08 led) {
 void init_io() {
     // 0-4 set up as output
     // pin 5 set up as button input
-    for (u08 pin=0; pin<4; pin++) {
+    for (u08 pin=0; pin<5; pin++) {
         // turn on the LED pin if the current pin is equal to the serlected display position
         // or, if they all should be on, turn on every LED
-        digital_dir(pin_lut[pin], 1); // 1 mode output
+        digital_dir(pin, 1); // 1 mode output
     }
     digital_dir(PIN_BUTTON, 0); // button pin input
     return;
@@ -82,18 +77,6 @@ int main(void) {
     init();
     init_io();
     // io configuration- input for button, output for leds
-
-    // start with base string
-    // we would want an array of strings (all possible names/display texts) that we could iterate through
-    // OR a function that just contains a switch case statement that can write string based on an index value
-    int ii=0;
-    while (1)
-    {
-        print_num(ii);
-        display_position(ii);
-        ii++;
-        delay_ms(1000);
-    }
     
 
     // working variables
@@ -106,19 +89,18 @@ int main(void) {
 
     u08 game_position = 0; // 0 to 4, 0 being the right most
                             // 0-51 first LED, 52-102, 103-153, 154,-204, 205-255 each directly addressing the output pins D0-D3
-    u08 game_direction = 0; // 0 going left, 1 going right
+    int8_t game_direction = 1; // 0 going left, -1 going right
     uint8_t update_flag = 1;
     uint8_t button_press_flag = 0;
 
+    print_num(0);
 
     while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
 
         timer++; // increment the timer
-        
 
-
-
-        button_value = get_btn();
+        button_value = !digital(PIN_BUTTON); // Remember that since button is pulled high, it's active low...so zero means pressed
+        // We invert that value so that a button_value of 1 means button is pressed
         if (button_value) {
             // button was pressed
             if ((!button_press_flag) && ((button_last_pressed + BUTTON_SPAM_REJECT_TIME) < timer)) {
@@ -130,7 +112,7 @@ int main(void) {
 
                 if (check_direction(game_position, game_direction)) {
                 // if the LED is at one of the extents, set the direction to opposite (invert directrion)
-                    game_direction = !game_direction;
+                    game_direction = game_direction * -1;
                 }
 
             }
@@ -149,8 +131,10 @@ int main(void) {
         }*/
         
         if(timer >= time_next_led_update || update_flag) {
+            print_num(1);
             // LED position update here
             time_next_led_update = timer + delay_time;
+            game_position = game_position + game_direction;
             // Turn off old LED
             // Turn on new LED
             display_position(game_position);

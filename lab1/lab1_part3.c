@@ -16,11 +16,15 @@ Description: Pong game with LED blinking
 #include "helpers.c"
 
 
-#define PIN_BUTTON 5
+#define PIN_BUTTON DIGITAL5_PIN
 #define BUTTON_SPAM_REJECT_TIME 50 // time, in ms, when a repeat button press will be ignored
 /*
     read button to pick string, loop thru chars in string with delay
 */
+
+// constant global LUT
+const u08 pin_lut[6] = {DIGITAL0_PIN, DIGITAL1_PIN, DIGITAL2_PIN, DIGITAL3_PIN, DIGITAL4_PIN, DIGITAL5_PIN};
+
 
 
 u08 check_direction(u08 current_position, u08 current_direction) {
@@ -56,7 +60,7 @@ void display_position(u08 led) {
     for (u08 pin=0; pin<4; pin++) {
         // turn on the LED pin if the current pin is equal to the serlected display position
         // or, if they all should be on, turn on every LED
-        digital_out(pin, ((pin==led) || led_override));
+        digital_out(pin_lut[pin], ((pin==led) || led_override));
     }
     return;
 }
@@ -67,7 +71,7 @@ void init_io() {
     for (u08 pin=0; pin<4; pin++) {
         // turn on the LED pin if the current pin is equal to the serlected display position
         // or, if they all should be on, turn on every LED
-        digital_dir(pin, 1); // 1 mode output
+        digital_dir(pin_lut[pin], 1); // 1 mode output
     }
     digital_dir(PIN_BUTTON, 0); // button pin input
     return;
@@ -76,6 +80,7 @@ void init_io() {
 int main(void) {
     // Init
     init();
+    init_io();
     // io configuration- input for button, output for leds
 
     // start with base string
@@ -84,6 +89,7 @@ int main(void) {
     int ii=0;
     while (1)
     {
+        print_num(ii);
         display_position(ii);
         ii++;
         delay_ms(1000);
