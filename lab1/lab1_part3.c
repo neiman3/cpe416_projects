@@ -23,92 +23,7 @@ Description: Pong game with LED blinking
 */
 
 
-int main(void) {
-    // Init
-    init();
-    // io configuration- input for button, output for leds
-
-    // start with base string
-    // we would want an array of strings (all possible names/display texts) that we could iterate through
-    // OR a function that just contains a switch case statement that can write string based on an index value
-
-    // working variables
-    uint8_t button_value;
-    u16 button_last_pressed = 0;
-
-    u16 timer = 0; //inidialite timer to zero
-    u08 delay_time = 255; // delay time in ms, max 255
-    u16 time_next_led_update = timer + delay_time;
-
-    u08 game_position = 0; // 0 to 4, 0 being the right most
-                            // 0-51 first LED, 52-102, 103-153, 154,-204, 205-255 each directly addressing the output pins D0-D3
-    u08 game_direction = 0; // 0 going left, 1 going right
-    uint8_t update_flag = 1;
-    uint8_t button_press_flag = 0;
-
-
-    while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
-
-        timer++; // increment the timer
-        
-
-
-
-        button_value = get_btn();
-        if (button_value) {
-            // button was pressed
-            if ((!button_press_flag) && ((button_last_pressed + BUTTON_SPAM_REJECT_TIME) < timer)) {
-                // All button press event stuff go here
-                button_press_flag = 1;
-                update_flag = 1;
-                
-                button_last_pressed = timer;
-
-                if (check_direction(game_position, game_direction)) {
-                // if the LED is at one of the extents, set the direction to opposite (invert directrion)
-                    direction = !direction;
-                }
-
-            }
-        } else if (button_press_flag) {
-            // user has let go of the button
-            button_press_flag = 0;
-        }
-        
-        /*if (update_flag) {
-            // do all grapics update here
-            // slice the string and display
-            // get string from user name variables
-            lcd_cursor(0,0);
-            // Write to the new IO pins (button on)
-            // Turn off other IO pins
-        }*/
-        
-        if(timer >= time_next_led_update || update_flag) {
-            // LED position update here
-            time_next_led_update = timer + delay_time;
-            // Turn off old LED
-            // Turn on new LED
-            display_position(game_position);
-            // reset update flag
-            update_flag=0;
-
-        }
-        
-        _delay_ms(1);
-    }
-
-    while(1) {
-        // end game state
-        // Display 
-        // all LED off
-    }
-
-}
-
-
-
-int check_direction(u08 current_position, u08 current_direction) {
+u08 check_direction(u08 current_position, u08 current_direction) {
     // Check position and direction
     // If it returns 1, it's a valid condition for the user to switch directions
     // if it returns zero, fon't change direction
@@ -157,3 +72,96 @@ void init_io() {
     digital_dir(PIN_BUTTON, 0); // button pin input
     return;
 }
+
+int main(void) {
+    // Init
+    init();
+    // io configuration- input for button, output for leds
+
+    // start with base string
+    // we would want an array of strings (all possible names/display texts) that we could iterate through
+    // OR a function that just contains a switch case statement that can write string based on an index value
+    int ii=0;
+    while (1)
+    {
+        display_position(ii);
+        ii++;
+        delay_ms(1000);
+    }
+    
+
+    // working variables
+    uint8_t button_value;
+    u16 button_last_pressed = 0;
+
+    u16 timer = 0; //inidialite timer to zero
+    u08 delay_time = 255; // delay time in ms, max 255
+    u16 time_next_led_update = timer + delay_time;
+
+    u08 game_position = 0; // 0 to 4, 0 being the right most
+                            // 0-51 first LED, 52-102, 103-153, 154,-204, 205-255 each directly addressing the output pins D0-D3
+    u08 game_direction = 0; // 0 going left, 1 going right
+    uint8_t update_flag = 1;
+    uint8_t button_press_flag = 0;
+
+
+    while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
+
+        timer++; // increment the timer
+        
+
+
+
+        button_value = get_btn();
+        if (button_value) {
+            // button was pressed
+            if ((!button_press_flag) && ((button_last_pressed + BUTTON_SPAM_REJECT_TIME) < timer)) {
+                // All button press event stuff go here
+                button_press_flag = 1;
+                update_flag = 1;
+                
+                button_last_pressed = timer;
+
+                if (check_direction(game_position, game_direction)) {
+                // if the LED is at one of the extents, set the direction to opposite (invert directrion)
+                    game_direction = !game_direction;
+                }
+
+            }
+        } else if (button_press_flag) {
+            // user has let go of the button
+            button_press_flag = 0;
+        }
+        
+        /*if (update_flag) {
+            // do all grapics update here
+            // slice the string and display
+            // get string from user name variables
+            lcd_cursor(0,0);
+            // Write to the new IO pins (button on)
+            // Turn off other IO pins
+        }*/
+        
+        if(timer >= time_next_led_update || update_flag) {
+            // LED position update here
+            time_next_led_update = timer + delay_time;
+            // Turn off old LED
+            // Turn on new LED
+            display_position(game_position);
+            // reset update flag
+            update_flag=0;
+
+        }
+        
+        _delay_ms(1);
+    }
+
+    while(1) {
+        // end game state
+        // Display 
+        // all LED off
+    }
+
+}
+
+
