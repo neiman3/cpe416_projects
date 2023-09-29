@@ -36,3 +36,8 @@ void slice_string(const char* base, char* slice_result, u08 start_index, u08 end
     // modifies the string
     strncpy(slice_result, base + start_index, end_index - start_index);
 }
+
+void debug(char* debug_msg, u08 x, u08 y) {
+    lcd_cursor(x,y);
+    print_string(debug_msg);
+}

@@ -22,14 +22,14 @@ Description: Pong game with LED blinking
     read button to pick string, loop thru chars in string with delay
 */
 
-u08 check_direction(u08 current_position, u08 current_direction) {
+u08 check_direction(u08 current_position, int8_t current_direction) {
     // Check position and direction
     // If it returns 1, it's a valid condition for the user to switch directions
     // if it returns zero, fon't change direction
     switch (current_direction)
     {
     case 1: // traveling left
-        if (current_position == 5) {
+        if (current_position == 4) {
             return 1;
         }
     case -1:
@@ -84,16 +84,29 @@ int main(void) {
     u16 button_last_pressed = 0;
 
     u16 timer = 0; //inidialite timer to zero
-    u08 delay_time = 255; // delay time in ms, max 255
+    u16 delay_time = 750; // delay time in ms, max 16 bit
     u16 time_next_led_update = timer + delay_time;
 
     u08 game_position = 0; // 0 to 4, 0 being the right most
                             // 0-51 first LED, 52-102, 103-153, 154,-204, 205-255 each directly addressing the output pins D0-D3
     int8_t game_direction = 1; // 0 going left, -1 going right
-    uint8_t update_flag = 1;
+    uint8_t update_flag = 0;
     uint8_t button_press_flag = 0;
 
-    print_num(0);
+    lcd_cursor(0,0);
+    display_position(6); // all led on
+    print_string("Ready...");
+    delay_ms(1000);
+    lcd_cursor(0,1);
+    display_position(5); // all led off
+    print_string("Set...");
+    delay_ms(1000);
+    clear_screen();
+    lcd_cursor(0,0);
+    print_string("Go!");
+
+    display_position(game_position);
+
 
     while(1) { // MAIN LOOP- each pass takes 1 ms aka 1khz update rate
 
@@ -106,13 +119,16 @@ int main(void) {
             if ((!button_press_flag) && ((button_last_pressed + BUTTON_SPAM_REJECT_TIME) < timer)) {
                 // All button press event stuff go here
                 button_press_flag = 1;
-                update_flag = 1;
                 
                 button_last_pressed = timer;
 
                 if (check_direction(game_position, game_direction)) {
                 // if the LED is at one of the extents, set the direction to opposite (invert directrion)
                     game_direction = game_direction * -1;
+                    update_flag = 1;
+                    delay_time = (u16)(delay_time - (delay_time * 5 / 100));
+                } else {
+                    delay_time = (u16)(delay_time - (delay_time * 1 / 100));
                 }
 
             }
@@ -130,26 +146,49 @@ int main(void) {
             // Turn off other IO pins
         }*/
         
-        if(timer >= time_next_led_update || update_flag) {
-            print_num(1);
-            // LED position update here
+        if((timer >= time_next_led_update) || update_flag) {
+
+            // determine the new LED positoin
+            // display it
+
+            // update timer
             time_next_led_update = timer + delay_time;
-            game_position = game_position + game_direction;
-            // Turn off old LED
-            // Turn on new LED
-            display_position(game_position);
             // reset update flag
             update_flag=0;
 
+            // increment the position
+            // LED position update here
+            game_position = game_position + game_direction;
+
+            // check to see if the player missed the button press
+            if (game_position > 4) {
+                // Player lost
+                break;
+            }
+
+            
+
+            display_position(game_position);
         }
         
         _delay_ms(1);
     }
 
+    // end game state
+    // Display 
+    // all LED off
+    clear_screen();
+    lcd_cursor(0,0);
+    print_string("You lose");
+    lcd_cursor(0,1);
+    print_string("t: ");
+    print_num(delay_time);
+    game_position = game_position - game_direction; // undo last direction change
     while(1) {
-        // end game state
-        // Display 
-        // all LED off
+        display_position(game_position);
+        delay_ms(400);
+        display_position(5);
+        delay_ms(400);
     }
 
 }
