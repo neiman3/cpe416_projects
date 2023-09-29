@@ -34,7 +34,7 @@ void print_string_wrapping(char *string, u08 base_pos_x, u08 base_pos_y) {
     // prints left to right
     // will wrap around a scrolling text that exceeds the screen size
     clear_screen();
-    u08 num_chars = strlen(string);
+    u08 num_chars = strlen(string) - 1;
     for (int i=0; i<num_chars; i++){
         pos_x = base_pos_x + i;
         pos_y = base_pos_y;
