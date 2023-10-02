@@ -1,17 +1,11 @@
 /*/**
- * @file lab1_part4.c
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
- * @date 2023-09-25
- *
- * @copyright Copyright (c) 2023
- *
- *
- * Create a program which scrolls the number ’416’ on the display that is 
- * controlled by the tilt of the board.  The program should work along the 2 axes.  
- * The number should never completely disappear from the screen, but should show at least 1 digit.
- *
+ * 
+
+Name:  Alex Neiman and Beck Dehlsen
+Lab 1 part 4
+
+Description: Tilt sensing with time delay control for text scrolling
+
  */
 
 #include "../library/globals.h"
