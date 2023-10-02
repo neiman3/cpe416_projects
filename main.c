@@ -20,7 +20,7 @@
 #include <avr/interrupt.h>
 #include <string.h>
 
-#define SCREEN_SIZE_X 7
+#define SCREEN_SIZE_X 8
 #define SCREEN_SIZE_Y 2
 
 #define DELAY_TIME_BASE 1000

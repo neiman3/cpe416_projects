@@ -14,13 +14,13 @@
  *
  */
 
-#include "./library/globals.h"
+#include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <string.h>
 
-#define SCREEN_SIZE_X 7
+#define SCREEN_SIZE_X 8
 #define SCREEN_SIZE_Y 2
 
 #define DELAY_TIME_BASE 1000
@@ -29,7 +29,7 @@
 #define ACCEL_CENTER 128
 
 void print_string_wrapping(char *string, u08 base_pos_x, u08 base_pos_y) {
-    u08 pos_x = 0;
+    u08 pos_x = 0;  // start a few rollovers over from zero- there's a display jump when it goes from 0->255
     u08 pos_y = 0;
     // prints left to right
     // will wrap around a scrolling text that exceeds the screen size
@@ -52,7 +52,7 @@ void print_string_wrapping(char *string, u08 base_pos_x, u08 base_pos_y) {
 }
 
 int main(void) {
-    u08 pos_x = 0; //  position x value
+    u08 pos_x = 28; //  position x value
     u08 pos_y = 0; //  position y value
     u08 accel_read;
     int8_t dir_x;

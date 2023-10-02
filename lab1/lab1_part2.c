@@ -13,10 +13,10 @@ Description: Text scrolling with string manipulation and non-blocking program fl
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "helpers.c"
+#include "../helpers.c"
 
 
-#define DELAY_TIME_MS 200
+#define DELAY_TIME_MS 350
 #define PIN_BUTTON 0
 /*
     read button to pick string, loop thru chars in string with delay
