@@ -11,7 +11,7 @@ Description: LED PWM control for AVR MCU- blinks one LED at a time using builtin
 #include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
-#include "../helpers.c"
+#include "./helpers.c"
 
 int main(void) {
     init();
