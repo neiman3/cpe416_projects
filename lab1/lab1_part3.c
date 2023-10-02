@@ -13,7 +13,7 @@ Description: Pong game with LED blinking
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "../helpers.c"
+#include "./helpers.c"
 
 
 #define PIN_BUTTON DIGITAL5_PIN
