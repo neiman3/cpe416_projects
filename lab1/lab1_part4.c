@@ -49,12 +49,10 @@ int main(void) {
     u08 pos_x = 28; //  position x value
     u08 pos_y = 0; //  position y value
     u08 accel_read;
-    int8_t dir_x;
-    int8_t dir_y;
+    int8_t dir_x = 0;
     u16 timer, update_time_x, update_time_y;
     u08 update = 0;    
 
-    char display_text[25];
     char msg[4] = "416";
 
     timer = 0;
