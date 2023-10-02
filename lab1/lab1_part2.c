@@ -13,7 +13,7 @@ Description: Text scrolling with string manipulation and non-blocking program fl
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "../helpers.c"
+#include "./helpers.c"
 
 
 #define DELAY_TIME_MS 350
