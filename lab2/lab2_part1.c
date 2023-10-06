@@ -19,7 +19,7 @@
 // speed range: -100 to 100 -> 0 to 250
 // speed = (speed + 100) * 250 / 200
 void motor(uint8_t num, int8_t speed) {
-    int16_t sp = (speed + 100) * 255 / 200;
+    int32_t sp = ((int32_t) speed + 100) * 255 / 200;
     // map -100 to 100 to 0 to 250
     set_servo(0, sp);
     return;
@@ -35,7 +35,7 @@ int main(void) {
             motor(0,i);
             motor(1,i);
             lcd_cursor(0,0);
-            print_string("Speed: ");
+            print_string("Speed:");
             print_num(i);
             _delay_ms(100);
         }
