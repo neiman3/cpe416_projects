@@ -15,14 +15,27 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#define TIMESTEP 5
+#define AMPLITUDE 100
+#define SERVO_CAL 40
+
 // call set_servo to spin the motor: 0 for left, 1 for right
-// speed range: -100 to 100 -> 0 to 250
-// speed = (speed + 100) * 250 / 200
+// speed range: -100 to 100 -> 0 to 255, 127 being zero, +-30  being the range before saturation
+
+// servo value = setpoint * 60 / 200 + 127
+// Adjust useable range using servo_cal #define
+// inversion (reverse) = 255 - servo value - 1 (prevent overflow by subtracting by 256)
+// gain
 void motor(uint8_t num, int8_t speed) {
-    int16_t sp = (speed + 100) * 255 / 200;
-    digital_dir
-    // map -100 to 100 to 0 to 250
-    set_servo(0, sp);
+    int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
+    if (num == 1) { // selected first wheel
+        // reverse right wheel
+        lcd_cursor(0,1);print_num(255 - sp - 1);print_string("   ");
+        set_servo(num, 255 - sp - 1);
+    } else {
+        lcd_cursor(0,0);print_num(sp);print_string("   ");
+        set_servo(num, sp);
+    }
     return;
 }
 
@@ -32,28 +45,38 @@ int main(void) {
     init();  //initialize board hardware
     
     while (1) {
-        for (int8_t i=0; i<=100; i++) {
+        for (int8_t i=0; i<=AMPLITUDE; i++) {
             motor(0,i);
             motor(1,i);
             lcd_cursor(0,0);
-            print_string("Speed: ");
+            clear_screen();
+            print_string("s1:");
             print_num(i);
-            _delay_ms(100);
+            _delay_ms(TIMESTEP);
         }
-        for (int8_t i=100; i<=0; i++) {
+        for (int8_t i=AMPLITUDE; i>=0; i--) {
             motor(0,i);
             motor(1,i);
-            _delay_ms(100);
+            clear_screen();
+            print_string("s2:");
+            print_num(i);
+            _delay_ms(TIMESTEP);
         }
-        for (int8_t i=0; i<=-100; i++) {
+        for (int8_t i=0; i>=-1*AMPLITUDE; i--) {
             motor(0,i);
             motor(1,i);
-            _delay_ms(100);
+            clear_screen();
+            print_string("s3:");
+            print_num(i);
+            _delay_ms(TIMESTEP);
         }
-        for (int8_t i=-100; i<=0; i++) {
+        for (int8_t i=-1*AMPLITUDE; i<=0; i++) {
             motor(0,i);
             motor(1,i);
-            _delay_ms(100);
+            clear_screen();
+            print_string("s4:");
+            print_num(i);
+            _delay_ms(TIMESTEP);
         }
     }
 
