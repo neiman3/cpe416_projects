@@ -15,8 +15,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define TIMESTEP 5
-#define AMPLITUDE 100
+#define TIMESTEP 20
+#define AMPLITUDE 50
 #define SERVO_CAL 40
 
 // call set_servo to spin the motor: 0 for left, 1 for right
@@ -30,10 +30,8 @@ void motor(uint8_t num, int8_t speed) {
     int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
     if (num == 1) { // selected first wheel
         // reverse right wheel
-        lcd_cursor(0,1);print_num(255 - sp - 1);print_string("   ");
         set_servo(num, 255 - sp - 1);
     } else {
-        lcd_cursor(0,0);print_num(sp);print_string("   ");
         set_servo(num, sp);
     }
     return;
@@ -43,6 +41,8 @@ void motor(uint8_t num, int8_t speed) {
 int main(void) {
 
     init();  //initialize board hardware
+    init_lcd();
+    init_servo();
     
     while (1) {
         for (int8_t i=0; i<=AMPLITUDE; i++) {

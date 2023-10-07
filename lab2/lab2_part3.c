@@ -7,8 +7,8 @@
  *
  *   Description: Switch between Braitenburg vehicles 2A and 2B
  * 
- *    2A: fear...       light on one side causes the wheel to increase movement, turning the robot away from the light
- *    2B: aggression... light on one side causes the opposite wheel to speed up, turinfg towards the light
+ *    3A: attraction...     light causes that side to slow down
+ *    3B: shy... light on that side causes other side to slow down
  *
  **/
 
@@ -37,11 +37,11 @@ void motor(uint8_t num, int8_t speed) {
 }
 
 int main(void) {
-   typedef enum {MODE_2A, MODE_2B} fsm_mode;
+   typedef enum {MODE_3A, MODE_3B} fsm_mode;
    u08 sensor_pins[2] = {0,1}; // Analog pins that correspond to sensors to read
    u08 sensor_value[2]; // sensor values array
 
-   fsm_mode mode = MODE_2A;
+   fsm_mode mode = MODE_3A;
    init();  //initialize board hardware
    init_servo();
    init_adc();
@@ -49,7 +49,7 @@ int main(void) {
    motor(0,0);
    motor(1,0);
 
-    print_string("Mode 2A");
+    print_string("Mode 3A");
     while(1) {
         // read ADC and do transform
         for(u08 i=0;i<sizeof(sensor_pins);i++) {
@@ -73,12 +73,12 @@ int main(void) {
 
             // increment mode;
             lcd_cursor(0,0);
-            if (mode == MODE_2A) {
-                print_string("Mode 2B");
-                mode = MODE_2B;
+            if (mode == MODE_3A) {
+                print_string("Mode 3B");
+                mode = MODE_3B;
             } else {
-                print_string("Mode 2A");
-                mode = MODE_2A;
+                print_string("Mode 3A");
+                mode = MODE_3A;
             }
 
             while (get_btn()) {
@@ -89,21 +89,19 @@ int main(void) {
         }
         for (int i=0; i<sizeof(sensor_pins); i++){
             u16 result;
-            result = DEFAULT_SPEED + ((u16) sensor_value[i] * GAIN * 100 / 255);
+            result = DEFAULT_SPEED + (100-DEFAULT_SPEED) - ((u16) sensor_value[i] * GAIN * (100-DEFAULT_SPEED) / 255);
             if (result > 100) {
                 result = 100;
             }
 
             switch (mode)
             {
-            case MODE_2A:
-            //  *    2A: fear...       light on one side causes the wheel to increase movement, turning the robot away from the light
+            case MODE_3A:
                 motor(i, result);
                 break;
                 
             
-            case MODE_2B:
-            //  *    2B: aggression... light on one side causes the opposite wheel to speed up, turinfg towards the light
+            case MODE_3B:
                 motor(!i, result);
                 break;
             
