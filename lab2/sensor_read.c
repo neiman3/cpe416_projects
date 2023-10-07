@@ -35,8 +35,10 @@ int main(void) {
     init_adc();
     init_servo();
     init_lcd();
+    set_servo(0,127);
+    set_servo(1,127);
 
-    u08 pins[] = {0, 1}; // ppins to read
+    u08 pins[] = {3, 4}; // ppins to read
     u08 xcoord[] = {0, 0, 4, 4}; // coords to print them here
     u08 ycoord[] = {0, 1, 0, 1};
     while(1) {
