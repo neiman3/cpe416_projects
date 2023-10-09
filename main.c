@@ -23,6 +23,7 @@
 
 #define TIMESTEP 100
 #define SERVO_CAL 40
+#define FWD_SPEED
 
 
 void motor(uint8_t num, int8_t speed) {
