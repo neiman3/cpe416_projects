@@ -16,15 +16,45 @@
 #include <avr/interrupt.h>
 #include <math.h>
 
-#define VWL 169 // white threshold for left
-#define VWR 159 // white threshold for right
+#define VWL 135 // white threshold for left
+#define VWR 135 // white threshold for right
 #define VBL 212 // black threshold for left
 #define VBR 212 // black threshold for right
+#define VSTATE_W_W 70 // white on white Vstate threshold
+#define VSTATE_B_B 20 // black on black threshold
+
+#define GAIN_KP_NUM 10
+#define GAIN_KP_DEN 10
+
+#define GAIN_KI_NUM 10
+#define GAIN_KI_DEN 10
+
+#define GAIN_KD_NUM 10
+#define GAIN_KD_DEN 10
 
 #define TIMESTEP 100
 #define SERVO_CAL 40
-#define FWD_SPEED
+#define FWD_SPEED 40 // Default forward speed
+#define THETA_FWD 45 // straight angle (zero/forward)
 
+int16_t min(int16_t arg1, int16_t arg2) {
+    if (arg1 < arg2){
+        return arg1;
+    }
+    return arg2;
+}
+
+int16_t max(int16_t arg1, int16_t arg2) {
+    if (arg1 > arg2){
+        return arg1;
+    }
+    return arg2;
+}
+
+int16_t bound(int16_t arg, int16_t minimum, int16_t maximum) {
+    
+    return max(minimum, min(maximum, arg));
+}
 
 void motor(uint8_t num, int8_t speed) {
     int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
@@ -37,10 +67,34 @@ void motor(uint8_t num, int8_t speed) {
     return;
 }
 
+void motor_dir(int16_t angle) {
+    // takes  a signed 8 bit "angle" +- 200 deg
+    // robot is turning with two radii so it's not really an angle...
+    angle = bound(angle, -100, 100);
+    
+    int16_t power_l = FWD_SPEED;
+    int16_t power_r = FWD_SPEED;
+    if (angle < 0) {
+        angle = angle * -1;
+        // turn left, cut power to left motor and boost power to right motor
+        power_l -= (angle * FWD_SPEED / 100);
+        power_r += (angle * FWD_SPEED / 100);
+    }
+    else if (angle > 0) {
+        // turn right, cut power to right motor and boost power to left motor
+        power_l += (angle * FWD_SPEED / 100);
+        power_r -= (angle * FWD_SPEED / 100);
+    }
+    power_l = bound(power_l, 0, 100);
+    power_r = bound(power_r, 0, 100);
+    motor(0, power_l);
+    motor(1, power_r);
+}
+
 int main(void) {
-   typedef enum {MODE_3A, MODE_3B} fsm_mode;
    u08 sensor_pins[2] = {3,4}; // Analog pins that correspond to sensors to read
    u08 sensor_value[2]; // sensor values array
+   u08 side_last_found = 0; // which sensor read tape most recently - for black-white case
 
    init();  //initialize board hardware
    init_servo();
@@ -60,10 +114,15 @@ int main(void) {
         }
 
         float theta;
+        // bound
+        sensor_value[0] = bound(sensor_value[0], VWL, VBL);
+        sensor_value[1] = bound(sensor_value[1], VWR, VBR);
+        
         lcd_cursor(0,0);
         print_num((sensor_value[0] - VWL*0));print_string("   ");
         lcd_cursor(0,1);
         print_num((sensor_value[1] - VWR*0));print_string("   ");
+
 
         // calculate 2d mapping transformation of angular difference of sensor readings
         theta = atanf((float) (sensor_value[0] - VWL) / (float) (sensor_value[1] - VWR)) * 180 / 3.14;
@@ -78,24 +137,30 @@ int main(void) {
         print_num((u16) (vstate));print_string("   ");
 
 
-        if(1) {     // proportional control mode
+        if(vstate < VSTATE_B_B) {  
+            lcd_cursor(3,0);print_string("B");   
+            // black on black or tape crossing
+            // go forward blindly
             
-        } else if (1) {    // outside threshold for proportional control - 1 value too low
-            if(sensor_value[0]) {
-                motor(0, 0);
-                motor(1, 0);
+        } else if (vstate > VSTATE_W_W) {    // outside threshold for proportional control - 1 value too low (black-white case)
+            //        // neither sensor reading the tape (white-white case)
+            // spin in the direction of side_last_found
+            lcd_cursor(3,0);print_string("W");  
+            if(side_last_found == 0) {  // left
+                motor_dir(-100);
+            } else {                    //right
+                motor_dir(100);
             }
-            else {
 
-            }
-        } else {       // neither sensor reading the tape
-            
+        } else {
+            // proportional control mode
+            lcd_cursor(3,0);print_string("P");  
+            motor_dir(((int16_t) (theta - THETA_FWD)) * GAIN_KP_NUM / GAIN_KP_DEN);
+            //side_last_found = 
         }
 
         _delay_ms(TIMESTEP);
     }
-
-
 
    return 0;
 }
