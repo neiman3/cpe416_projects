@@ -16,10 +16,10 @@
 #include <avr/interrupt.h>
 #include <math.h>
 
-#define VWL 145 // white threshold for left
-#define VWR 138 // white threshold for right
-#define VBL 205 // black threshold for left
-#define VBR 205 // black threshold for right
+#define VWL 169 // white threshold for left
+#define VWR 159 // white threshold for right
+#define VBL 212 // black threshold for left
+#define VBR 212 // black threshold for right
 
 #define TIMESTEP 100
 #define SERVO_CAL 40
