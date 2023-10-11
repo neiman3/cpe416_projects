@@ -147,7 +147,7 @@ int main(void) {
     motor(0,0);
     motor(1,0);
 
-    // calibration step
+    // calibration step- see if user wants to skip
     u08 skip_cal = SKIP_CAL;
     clear_screen();
     lcd_cursor(0,0);
@@ -285,14 +285,14 @@ int main(void) {
         print_num((u16) (vstate));print_string("   ");
 
 
-        if(vstate < VSTATE_B_B) {  
+        if(vstate < VSTATE_B_B_set) {  
             lcd_cursor(3,0);print_string("B");   
             // black on black or tape crossing
             // go forward blindly
             motor_dir(0);
             _delay_ms(250);
             
-        } else if (vstate > VSTATE_W_W) {    // outside threshold for proportional control - 1 value too low (black-white case)
+        } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
             //        // neither sensor reading the tape (white-white case)
             // spin in the direction of side_last_found
             lcd_cursor(3,0);print_string("W");  
