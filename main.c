@@ -22,7 +22,7 @@
 #define VWR 170 // white threshold for right
 #define VBL 212 // black threshold for left
 #define VBR 212 // black threshold for right
-#define VSTATE_W_W 90 // white on white Vstate threshold
+#define VSTATE_W_W 50 // white on white Vstate threshold
 #define VSTATE_B_B 10 // black on black threshold
 
 #define GAIN_KP_NUM 25
@@ -38,7 +38,7 @@
 #define DEBUG_MODE 1 // make motor turn off when button held
 #define TIMESTEP 100
 #define SERVO_CAL 40
-#define FWD_SPEED 30 // Default forward speed
+#define FWD_SPEED 30 // Default forward speed should be 30
 #define THETA_FWD 45 // straight angle (zero/forward)
 #define TURN_TIME_THRESHOLD 11 // time steps before it switches 
 #define HISTORY_LENGTH 10
@@ -176,8 +176,8 @@ int main(void) {
 
     // control variables 
     int16_t theta_deg = 0; // proportiona
-    int16_t theta_deg_d = 0; // derivative
-    int16_t theta_deg_i = 0; // integral
+    // int16_t theta_deg_d = 0; // derivative
+    // int16_t theta_deg_i = 0; // integral
     u16 theta_deg_history[HISTORY_LENGTH] = {123, 123, 123, 123, 123, 123, 123, 123, 123, 123};
 
     u08 VWL_set = VWL;
@@ -312,7 +312,7 @@ int main(void) {
         theta = calculate_theta(sensor_value[0], VWL_set, sensor_value[1], VWR_set);
         time_advance(theta_deg_history, (u16) theta);
         theta_deg = proportional_error(theta_deg_history, THETA_FWD);
-        theta_deg_i = integral_error(theta_deg_history, THETA_FWD);
+        // theta_deg_i = integral_error(theta_deg_history, THETA_FWD);
         lcd_cursor(4,0);
 
         // calculate vstate vector magnitude to determine black, white, etc
@@ -326,6 +326,8 @@ int main(void) {
             // go forward blindly
             lcd_cursor(0,0);print_string("B");
             motor_dir(0);
+            lcd_cursor(0,0);print_string("On line ");
+            lcd_cursor(0,1);print_string("e:bob   ");
             _delay_ms(250);
             
         } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
@@ -333,9 +335,8 @@ int main(void) {
             // spin in the direction of side_last_found
 
             // DEBUG
-            clear_screen();
-            lcd_cursor(0,0);
-            print_string("W");
+            lcd_cursor(0,0);print_string("Off line");
+            lcd_cursor(0,1);print_string("        ");
 
             u16 timer_w_o_w;
             for(timer_w_o_w = TURN_TIME_THRESHOLD; timer_w_o_w > 0; timer_w_o_w--) {
@@ -366,26 +367,44 @@ int main(void) {
                 
             }
 
+            int8_t corner_find_speed = -1*FWD_SPEED;
             if(timer_w_o_w == 0) {    // line not found in time limit, try the other side
                 // reverse side last fonud
                 side_last_found = !side_last_found;
                 while(vstate  > VSTATE_W_W_set) {
                     // while we still haven't picked up the line...
                     if(side_last_found == 0) {  // left
-                // SPIN left (not turn)
-                    motor(0,-1*FWD_SPEED);
-                    motor(1, FWD_SPEED);
-                } else {                    //right
-                    motor(0, FWD_SPEED);
-                    motor(1, -1*FWD_SPEED);
-                }
+                        // SPIN left (not turn)
+                            motor(0, corner_find_speed);
+                            motor(1, FWD_SPEED);
+                        } else {                    //right
+                            motor(0, FWD_SPEED);
+                            motor(1, corner_find_speed);
+                    }
                 
-                read_sensors(sensor_pins, sensor_value);
-                sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
-                sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
-                vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
+                    read_sensors(sensor_pins, sensor_value);
+                    sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
+                    sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
+                    vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
 
-                _delay_ms(TIMESTEP);
+                    _delay_ms(TIMESTEP);
+                    
+                    timer_w_o_w++;
+
+                    // spiral out over time
+                    // if timer > 3* #define thresholde time (probably did one full rotation)
+                        // corner find speed++
+                    // else
+                        // increment timer
+                    
+                    if (timer_w_o_w >= 3*TURN_TIME_THRESHOLD) {
+                        corner_find_speed++;
+
+                        lcd_cursor(0,0);print_string("Finding ");
+                        lcd_cursor(0,1);print_string("line... ");
+                    } else {
+                        timer_w_o_w++;
+                    }
                 }
 
             }
@@ -401,10 +420,9 @@ int main(void) {
         
         } else {
             // proportional control mode
-            lcd_cursor(0,0);print_string("P");  
+            lcd_cursor(0,0);print_string("On line ");
+            lcd_cursor(0,1);print_string("e:");if (theta_deg >= 0) print_num(theta_deg); else {print_string("-");print_num(0 - (int8_t) theta_deg);}print_string("   ");
             motor_dir(((int16_t) theta_deg) * GAIN_KP_NUM / GAIN_KP_DEN);
-            // stuck detection
-            u08 stuck = sensor_value[0];
         }
 
         _delay_ms(TIMESTEP);
