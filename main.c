@@ -23,7 +23,7 @@
 #define VBL 212 // black threshold for left
 #define VBR 212 // black threshold for right
 #define VSTATE_W_W 90 // white on white Vstate threshold
-#define VSTATE_B_B 20 // black on black threshold
+#define VSTATE_B_B 10 // black on black threshold
 
 #define GAIN_KP_NUM 20
 #define GAIN_KP_DEN 10
@@ -40,6 +40,7 @@
 #define SERVO_CAL 40
 #define FWD_SPEED 30 // Default forward speed
 #define THETA_FWD 45 // straight angle (zero/forward)
+#define HISTORY_LENGTH 10
 
 float calculate_vstate_vector(u08 vbl_set, u08 sensor_0, u08 vbr_set, u08 sensor_1) {
     return (float) sqrt((double) square(vbl_set - sensor_0) + (double) square(vbr_set - sensor_1));
@@ -128,10 +129,45 @@ void wait_for_button() {
     }
 }
 
+void time_advance(u16 *array, u16 new_value) {
+    // 0 being most recent
+    // positive index meaning negative time index (in the past/previous])
+    for (u08 i =  (HISTORY_LENGTH - 1); i > 0; i--) {
+        array[i] = array[i-1];
+    }
+    array[0] = new_value;
+}
+
+int16_t proportional_error(u16 *array, u16 setpoint) {
+    return setpoint - array[0];
+}
+
+int16_t integral_error(u16 *array, u16 setpoint) {
+    // return integral of (array minus error)
+    int16_t result = 0;
+    for (u08 i=0; i<HISTORY_LENGTH; i++) {
+        result += (setpoint - array[i]);
+    }
+    result = result / HISTORY_LENGTH;
+    return result;
+    
+}
+
+int16_t derivative_error(u16 *array, u16 setpoint) {
+    // return time derivative of (array minus error)
+    return ((int16_t) setpoint - array[0]) - ((int16_t) setpoint - array[1]);
+}
+
 int main(void) {
     u08 sensor_pins[2] = {3,4}; // Analog pins that correspond to sensors to read
     u08 sensor_value[2]; // sensor values array
     u08 side_last_found = 0; // which sensor read tape most recently - for black-white case
+
+    // control variables 
+    int16_t theta_deg = 0; // proportiona
+    int16_t theta_deg_d = 0; // derivative
+    int16_t theta_deg_i = 0; // integral
+    u16 theta_deg_history[HISTORY_LENGTH] = {123, 123, 123, 123, 123, 123, 123, 123, 123, 123};
 
     u08 VWL_set = VWL;
     u08 VWR_set = VWR;
@@ -266,15 +302,12 @@ int main(void) {
         sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
         sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
         
-        lcd_cursor(0,0);
-        print_num((sensor_value[0]));print_string("   ");
-        lcd_cursor(0,1);
-        print_num((sensor_value[1]));print_string("   ");
-
 
         // calculate 2d mapping transformation of angular difference of sensor reading
         theta = calculate_theta(sensor_value[0], VWL_set, sensor_value[1], VWR_set);
-        u16 theta_deg = (u16) theta;
+        time_advance(theta_deg_history, (u16) theta);
+        theta_deg = proportional_error(theta_deg_history, THETA_FWD);
+        theta_deg_i = integral_error(theta_deg_history, THETA_FWD);
         lcd_cursor(4,0);
         print_num(theta_deg);print_string("   ");
 
@@ -286,7 +319,6 @@ int main(void) {
 
 
         if(vstate < VSTATE_B_B_set) {  
-            lcd_cursor(3,0);print_string("B");   
             // black on black or tape crossing
             // go forward blindly
             motor_dir(0);
@@ -295,17 +327,37 @@ int main(void) {
         } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
             //        // neither sensor reading the tape (white-white case)
             // spin in the direction of side_last_found
-            lcd_cursor(3,0);print_string("W");  
-            if(side_last_found == 0) {  // left
-                motor_dir(-100);
+
+            // DEBUG
+            clear_screen();
+            lcd_cursor(0,0);
+            print_string("W on W"); _delay_ms(1500);
+            for (int i=0; i<10; i++) {
+                clear_screen();
+                lcd_cursor(0,0);
+                print_string("History"); lcd_cursor(0,1); print_num(i); print_string(": ");
+                print_num(theta_deg_history[i]); _delay_ms(1500);
+            }
+            
+            clear_screen();
+            lcd_cursor(0,0);
+            print_string("Theta integral"); lcd_cursor(0,1); print_num(theta_deg_i);
+             _delay_ms(1500);
+            
+
+            if(theta_deg_i > 0) {  // left
+            // SPIN left (not turn)
+                motor(0,-1*FWD_SPEED);
+                motor(1, FWD_SPEED);
             } else {                    //right
-                motor_dir(100);
+                motor(0, FWD_SPEED);
+                motor(1, -1*FWD_SPEED);
             }
 
         } else {
             // proportional control mode
             lcd_cursor(3,0);print_string("P");  
-            motor_dir(((int16_t) (THETA_FWD - theta)) * GAIN_KP_NUM / GAIN_KP_DEN);
+            motor_dir(((int16_t) theta_deg) * GAIN_KP_NUM / GAIN_KP_DEN);
             if (theta < THETA_FWD) { // on the right side
                 side_last_found = 1;
             } else {
