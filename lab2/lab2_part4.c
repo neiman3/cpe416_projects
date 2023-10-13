@@ -367,28 +367,31 @@ int main(void) {
                 
             }
 
+            u08 corner_find_speed = -1*FWD_SPEED;
             if(timer_w_o_w == 0) {    // line not found in time limit, try the other side
                 // reverse side last fonud
                 side_last_found = !side_last_found;
                 while(vstate  > VSTATE_W_W_set) {
                     // while we still haven't picked up the line...
                     if(side_last_found == 0) {  // left
-                // SPIN left (not turn)
-                    motor(0,-1*FWD_SPEED);
-                    motor(1, FWD_SPEED);
-                } else {                    //right
-                    motor(0, FWD_SPEED);
-                    motor(1, -1*FWD_SPEED);
-                }
+                        // SPIN left (not turn)
+                            motor(0, corner_find_speed);
+                            motor(1, FWD_SPEED);
+                        } else {                    //right
+                            motor(0, FWD_SPEED);
+                            motor(1, corner_find_speed);
+                    }
                 
-                read_sensors(sensor_pins, sensor_value);
-                sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
-                sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
-                vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
+                    read_sensors(sensor_pins, sensor_value);
+                    sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
+                    sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
+                    vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
 
-                _delay_ms(TIMESTEP);
+                    _delay_ms(TIMESTEP);
+
+                    if(corner_find_speed < 100)
+                        corner_find_speed++;
                 }
-
             }
 
             // when it reaches white on white, 

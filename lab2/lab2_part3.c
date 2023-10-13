@@ -3,9 +3,9 @@
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 2 part 2
+ *   Lab 2 part 3
  *
- *   Description: Switch between Braitenburg vehicles 2A and 2B
+ *   Description: Switch between Braitenburg vehicles 3A and 3B
  * 
  *    3A: attraction...     light causes that side to slow down
  *    3B: shy... light on that side causes other side to slow down

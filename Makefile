@@ -3,7 +3,7 @@ BOARD_LIB = $(SELF_DIR)/library
 SOURCE_LIB = $(wildcard $(BOARD_LIB)/*.c)
 CLOCK_RATE = 16000000L
 #edit the device to match the device on your computer
-MAC_DEVICE = `ls /dev/cu.usbmodem1401`
+MAC_DEVICE = `ls /dev/cu.usbmodem11401`
 
 main: main.c $(wildcard $(BOARD_LIB)/*.c)
 	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf main.c $(wildcard $(BOARD_LIB)/*.c)

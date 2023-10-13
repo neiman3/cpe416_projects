@@ -314,18 +314,17 @@ int main(void) {
         theta_deg = proportional_error(theta_deg_history, THETA_FWD);
         theta_deg_i = integral_error(theta_deg_history, THETA_FWD);
         lcd_cursor(4,0);
-        print_num(theta_deg);print_string("   ");
 
         // calculate vstate vector magnitude to determine black, white, etc
         float vstate;
         vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
         lcd_cursor(4,1);
-        print_num((u16) (vstate));print_string("   ");
 
 
         if(vstate < VSTATE_B_B_set) {  
             // black on black or tape crossing
             // go forward blindly
+            lcd_cursor(0,0);print_string("B");
             motor_dir(0);
             _delay_ms(250);
             
@@ -336,7 +335,7 @@ int main(void) {
             // DEBUG
             clear_screen();
             lcd_cursor(0,0);
-            print_string("W on W");
+            print_string("W");
 
             u16 timer_w_o_w;
             for(timer_w_o_w = TURN_TIME_THRESHOLD; timer_w_o_w > 0; timer_w_o_w--) {
@@ -402,8 +401,10 @@ int main(void) {
         
         } else {
             // proportional control mode
-            lcd_cursor(3,0);print_string("P");  
+            lcd_cursor(0,0);print_string("P");  
             motor_dir(((int16_t) theta_deg) * GAIN_KP_NUM / GAIN_KP_DEN);
+            // stuck detection
+            u08 stuck = sensor_value[0];
         }
 
         _delay_ms(TIMESTEP);
