@@ -44,7 +44,7 @@
 #define HISTORY_LENGTH 10
 
 float calculate_vstate_vector(u08 vbl_set, u08 sensor_0, u08 vbr_set, u08 sensor_1) {
-    return (float) sqrt((double) square(vbl_set - sensor_0) + (double) square(vbr_set - sensor_1));
+    return (float) sqrt((double) (vbl_set - sensor_0) * (vbl_set - sensor_0) + (double) (vbr_set - sensor_1) * (vbr_set - sensor_1));
 }
 
 float calculate_theta(u08 sensor_0, u08 vwl_set, u08 sensor_1, u08 vwr_set) {

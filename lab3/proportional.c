@@ -1,3 +1,5 @@
+#include "proportional.h"
+
 /**
  * 
  *
@@ -6,44 +8,6 @@
  *   Lab 3 ANN training
  *
  **/
-
-
-#include "../../library/globals.h"
-#include <math.h>
-
-// local machine only
-#include <stdio.h>
-
-
-// Tunings and threhsold
-#define VWL 170 // white threshold for left
-#define VWR 170 // white threshold for right
-#define VBL 212 // black threshold for left
-#define VBR 212 // black threshold for right
-#define VSTATE_W_W 50 // white on white Vstate threshold
-#define VSTATE_B_B 10 // black on black threshold
-
-#define GAIN_KP_NUM 25
-#define GAIN_KP_DEN 10
-
-#define GAIN_KI_NUM 10
-#define GAIN_KI_DEN 10
-
-#define GAIN_KD_NUM 10
-#define GAIN_KD_DEN 10
-
-#define FWD_SPEED 30 // Default forward speed should be 30
-#define THETA_FWD 45 // straight angle (zero/forward)
-#define HISTORY_LENGTH 10
-#define TIMESTEP 100
-
-
-typedef struct {
-    int8_t left;
-    int8_t right;
-} motor_command;
-
-// motor_command proportional(u08 , u08);
 
 
 float calculate_vstate_vector(u08 vbl_set, u08 sensor_0, u08 vbr_set, u08 sensor_1) {
@@ -194,28 +158,13 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
 
 
 
-int main(void) {
-
-    // float nn_weights[NUM_WEIGHTS];   // Weights from neural net training
-
-
-
-
-    motor_command mc = compute_proportional(193, 182);
-    
-    // // init weights pre-training
-    // for(int i=0; i<NUM_WEIGHTS; i++) {
-    //     nn_weights = 0;
-    //     nn_weights = -1;    // bias "weights"
-    // }
-
-    // train model
-    // train_nn(nn_weights);
-
-    printf("%d", mc.left); printf(" ");
-    printf("%d", mc.right);
-    printf("\n");
-
-
-    return 0;
+void motor(uint8_t num, int8_t speed) {
+    int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
+    if (num == 1) { // selected first wheel
+        // reverse right wheel
+        set_servo(num, 255 - sp - 1);
+    } else {
+        set_servo(num, sp);
+    }
+    return;
 }
