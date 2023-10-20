@@ -10,7 +10,7 @@
 #define MOTOR_L         0
 #define MOTOR_R         1
 
-#define TIMESTEP        100
+#define TIMESTEP        10
 
 #define NUM_WEIGHTS = 17    // number of weights in the NN model, including biases
 #define EPOCHS = 1000       // full training cycles

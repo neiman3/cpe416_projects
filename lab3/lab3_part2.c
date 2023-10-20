@@ -12,17 +12,19 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <math.h>
-#include <stdlib.h>
 #include "proportional.h"
 
 #define PIN_SENSOR_L    3
 #define PIN_SENSOR_R    4
 #define MOTOR_L         0
 #define MOTOR_R         1
-#define TIMESTEP        100
 
-#define NUM_WEIGHTS = 17    // number of weights in the NN model, including biases
-#define EPOCHS = 1000       // full training cycles
+#define TIMESTEP        10
+
+// input layer
+#define NUM_INPUTS 2
+#define NUM_WEIGHTS 17    // number of weights in the NN model, including biases
+#define EPOCHS 1000       // full training cycles
 
 // iterate on training data, adjusting weights after each epoch
 void train_neural_network(float *weights, float *data) {
@@ -76,5 +78,6 @@ int main(void) {
     printf("\n");
 
 
-    return 0;
+   return 0;
 }
+
