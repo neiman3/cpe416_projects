@@ -19,7 +19,7 @@ p1: $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c)
 
 
 p2: $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c)
-	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c)
+	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c) ./lab3/*.c
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex

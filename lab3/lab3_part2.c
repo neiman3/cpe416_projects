@@ -7,12 +7,13 @@
  *
  **/
 
-#include "./library/globals.h"
+#include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <math.h>
 #include "proportional.h"
+#include "neuralnet.h"
 
 #define PIN_SENSOR_L    3
 #define PIN_SENSOR_R    4
@@ -20,63 +21,64 @@
 #define MOTOR_R         1
 
 #define TIMESTEP        10
+#define MAX_TRAIN_DATA  999 // maximum number of training data points
 
-// input layer
-#define NUM_INPUTS 2
-#define NUM_WEIGHTS 17    // number of weights in the NN model, including biases
-#define EPOCHS 1000       // full training cycles
+// get size of layer: my_net.layer_size[0] -> 3
 
-// iterate on training data, adjusting weights after each epoch
-void train_neural_network(float *weights, float *data) {
-    return;
-}
 
-// scale sensor inputs, then calculate a motor command using neural net
-motor_command compute_neural_network(u08 left, u08 right) {
-    return;
-}
+
 
 int main(void) {
-
-    float nn_weights[NUM_WEIGHTS];   // Weights from neural net training
+    // Neural network model
+    // Initialize neural network
+    nn network;
     u08 sensor_l, sensor_r;
+    u16 data_size; // number of data points to train on [0, MAX_TRAIN_DATA]
+    u08 data[MAX_TRAIN_DATA][2];    // left-right training data
+    motor_command mc;
 
     init();
-
+    initialize_neural_network(&network); // set all weights to random
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
     clear_screen();
     lcd_cursor(0,0);
-    print_string("Proportional");
+    motor_command test = compute_neural_network(187,193, &network);
+    print_num(187);
+    lcd_cursor(4,0); print_num(193);
+    lcd_cursor(0,1); print_num(test.left);
+    lcd_cursor(4,1); print_num(test.right);
+    while(1) {}
 
-    // proportional control
+    print_string("Proportional");
     while(!get_btn()) {
         sensor_l = analog(PIN_SENSOR_L);
         sensor_r = analog(PIN_SENSOR_R);
-        motor_command mc = compute_proportional(sensor_l, sensor_r);
+        mc = compute_proportional(sensor_l, sensor_r);
         motor(MOTOR_L, mc.left);
         motor(MOTOR_R, mc.right);
         _delay_ms(TIMESTEP);
     }
 
     clear_screen();
-    lcd_cursor(0,0);
+    lcd_cursor(5,0);
     print_string("Data");
-
-    motor_command mc = compute_proportional(193, 182);
-    
-     // init weights pre-training
-    for(int i=0; i<NUM_WEIGHTS; i++) {
-        nn_weights = rand() / RAND_MAX;
+    lcd_cursor(1,0);
+    for(data_size=0; data_size<MAX_TRAIN_DATA && !get_btn(); data_size++) {
+        sensor_l = analog(PIN_SENSOR_L);
+        sensor_r = analog(PIN_SENSOR_R);
+        data[data_size][0] = sensor_l;
+        data[data_size][1] = sensor_r;
+        _delay_ms(TIMESTEP);
     }
 
-    // train model
-    train_neural_network(nn_weights);
+    clear_screen();
+    lcd_cursor(5,0);
+    print_string("Data");
+    lcd_cursor(1,0);
+    // train_neural_network(nn_weights);
 
-    printf("%d", mc.left); printf(" ");
-    printf("%d", mc.right);
-    printf("\n");
-
+    //mc = compute_neural_network()
 
    return 0;
 }

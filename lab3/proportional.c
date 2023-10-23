@@ -102,7 +102,6 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
     
     u08 sensor_value[2] = {left_value, right_value};
     int8_t output[2];
-    u08 side_last_found = 0; // which sensor read tape most recently - for black-white case. 0 means left
 
     // control variables 
     int16_t theta_deg = 0; // proportiona

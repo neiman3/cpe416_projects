@@ -26,7 +26,6 @@
 #define HISTORY_LENGTH 10
 #define SERVO_CAL 40
 
-
 typedef struct {
     int8_t left;
     int8_t right;
