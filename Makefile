@@ -3,7 +3,8 @@ BOARD_LIB = $(SELF_DIR)/library
 SOURCE_LIB = $(wildcard $(BOARD_LIB)/*.c)
 CLOCK_RATE = 16000000L
 #edit the device to match the device on your computer
-MAC_DEVICE = `ls /dev/cu.usbmodem121401`
+USB_ARR = $(shell ls /dev | grep cu.usb)
+MAC_DEVICE = `ls /dev/$(USB_ARR)`
 LAB = lab3
 
 main: main.c $(wildcard $(BOARD_LIB)/*.c)
@@ -19,7 +20,7 @@ p1: $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c)
 
 
 p2: $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c)
-	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c) ./lab3/*.c
+	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/proportional.c ./$(LAB)/neuralnet.c
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex

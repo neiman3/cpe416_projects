@@ -68,8 +68,8 @@ void train_neural_network(float *network, float *data) {
     
 }
 
-void debug(char *string, u16 value) {
-    lcd_cursor(0,0); print_string(string);
-    lcd_cursor(0,1); print_num(value);
-    _delay_ms(2000);
-}
+//void debug(char *string, u16 value) {
+//    lcd_cursor(0,0); print_string(string);
+//    lcd_cursor(0,1); print_num(value);
+//    _delay_ms(2000);
+//}
