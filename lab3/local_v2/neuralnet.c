@@ -71,7 +71,7 @@ float activation(float input) {
 
 
 // iterate on training data, adjusting weights after each data point
-void train_neural_network(float *network, training_data *data, u16 num_data_points) {
+void train_neural_network(nn *network, sensor_reading *data, u16 num_data_points) {
     // Training data comes in an array of type training_data (holds two uint8_t)
     // NUM_EPOCHS is #define'd
     // num_data_points is num. data points captured in data capture mode
@@ -79,17 +79,45 @@ void train_neural_network(float *network, training_data *data, u16 num_data_poin
         // for each epoch
         for (u16 p=0; p<num_data_points; p++) {
             // for each data point in the set:
-
+            sensor_reading *data_point = &(data[p]); // get single data point
+            // calculate expected value
+            motor_command expected_value = compute_proportional(data_point->left, data_point->right);
             // feed forward with data point
+            motor_command network_output = compute_neural_network(data_point->left, data_point->right, network);
             // for each layer in the network, output layer first
-                // for each node in the layer
-                    // for each weight in the node
+            for (u08 l=1; l>=0; l--) {
+                node *current_layer = &(network.layers[l]); // pointer to the current layer, a array of nodes of size LAYER_SIZE_A
+                for (u08 n=0; n<layer_size[l]; n++) {
+                    // for each node in the layer
+                    node *current_node = &(current_layer[n]);
+                    for (u08 w=0; w<current_node->num_weights; w++) {
+                        // for each weight in the node:
+                        float derivative = compute_derivative(l, n, w, expected_value, network_output, network);
                         // find derivative
                         // adjust by learning rate in correct sign
+                    }
                     // for the bias in the node
-                        // find derivative
-                        // adjust by learning rate in correct sign
+                    // find derivative
+                    // adjust by learning rate in correct sign
+                }
+            }
         }
+    }
+}
+
+float compute_derivative(u08 layer, u08 node, u08 weight_no, motor_command input, motor_command output, nn *network) {
+    node *current_node = &(network.layer[layer][node]) // get current node
+    if (layer == 1) {
+        // OUTPUT LAYER CALCULATION
+        // Assume weight_no is 0 or 1
+        if (weight_no == 0) {
+            // left side
+            float target = 
+        }
+
+    } else {
+        // INPUT LAYER CALCULATION
+        float dEt_dw[] 
     }
 }
 
