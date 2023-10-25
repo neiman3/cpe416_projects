@@ -32,8 +32,8 @@ int main(void) {
     // Neural network model
     // Initialize neural network
     nn network;
-//    u08 sensor_l, sensor_r;
-//    u16 data_size; // number of data points to train on [0, MAX_TRAIN_DATA]
+    u08 sensor_l, sensor_r;
+    u16 data_size; // number of data points to train on [0, MAX_TRAIN_DATA]
     u08 data[MAX_TRAIN_DATA][2];    // left-right training data
     motor_command mc;
 

@@ -1,5 +1,10 @@
-#ifndef PROPORTIONAL_H
-#define PROPORTIONAL_H
+//
+// Created by Alex Neiman on 10/24/23.
+//
+
+#ifndef LOCAL_V2_PROPORTIONAL_H
+#define LOCAL_V2_PROPORTIONAL_H
+
 
 #include "../../library/globals.h"
 #include <math.h>
@@ -46,4 +51,4 @@ int16_t derivative_error(u16 *array, u16 setpoint);
 motor_command compute_proportional(u08 left_value, u08 right_value);
 void debug(char *string, u16 value);
 
-#endif
+#endif //LOCAL_V2_PROPORTIONAL_H
