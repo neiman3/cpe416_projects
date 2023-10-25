@@ -37,6 +37,12 @@ typedef struct {
 
 } motor_command;
 
+typedef struct {
+    int8_t left;
+    int8_t right;
+
+} sensor_reading;
+
 void motor_dir(int16_t angle, int8_t *output);
 void motor(uint8_t num, int8_t speed);
 void time_advance(u16 *array, u16 new_value);

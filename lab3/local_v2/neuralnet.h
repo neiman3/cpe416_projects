@@ -4,12 +4,13 @@
 
 #ifndef LOCAL_V2_NEURALNET_H
 #define LOCAL_V2_NEURALNET_H
-#define NUM_LAYERS 2
-#define LAYER_SIZE_A 3
-#define LAYER_SIZE_B 2
-#define NUM_INPUTS 2
-#define NUM_OUTPUTS 2
-#define NUM_EPOCHS 1000
+#define NUM_LAYERS      2
+#define LAYER_SIZE_A    3
+#define LAYER_SIZE_B    2
+#define NUM_INPUTS      2
+#define NUM_OUTPUTS     2
+#define NUM_EPOCHS      1000
+#define LEARNING_RATE   0.01
 
 
 #include "../../library/globals.h"

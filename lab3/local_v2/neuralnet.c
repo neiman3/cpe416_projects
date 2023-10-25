@@ -69,12 +69,26 @@ float activation(float input) {
 }
 
 
-// iterate on training data, adjusting weights after each epoch
+// iterate on training data, adjusting weights after each data point
 void train_neural_network(float *network, float *data, u16 num_data_points) {
     // NUM_EPOCHS is #define'd
     // num_data_points is num. data points captured in data capture mode
+    for (u16 e=0; e<NUM_EPOCHS; e++){
+        // for each epoch
+        for (u16 p=0; p<num_data_points; p++) {
+            // for each data point in the set:
 
-
+            // feed forward with data point
+            // for each layer in the network, output layer first
+                // for each node in the layer
+                    // for each weight in the node
+                        // find derivative
+                        // adjust by learning rate in correct sign
+                    // for the bias in the node
+                        // find derivative
+                        // adjust by learning rate in correct sign
+        }
+    }
 }
 
 //void debug(char *string, u16 value) {
