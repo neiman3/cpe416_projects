@@ -40,7 +40,7 @@ motor_command compute_neural_network(u08 left, u08 right, nn *network);
 void initialize_neural_network(nn *network);
 float activation(float input);
 void train_neural_network(float *network, float *data, u16 num_data_points);
-float compute_derivative(u08 layer, u08 node, u08 weight_no, motor_command input, motor_command output, nn *network);
+float compute_derivative(u08 layer, u08 node, u08 weight_no, motor_command *input, motor_command *output, nn *network);
 
 
 #endif //LOCAL_V2_NEURALNET_H
