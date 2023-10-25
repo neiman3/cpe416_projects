@@ -3,6 +3,7 @@
 //
 
 #include "neuralnet.h"
+#include "proportional.h"
 
 void initialize_neural_network(nn *network) {
     // set default neural network structure
@@ -70,7 +71,8 @@ float activation(float input) {
 
 
 // iterate on training data, adjusting weights after each data point
-void train_neural_network(float *network, float *data, u16 num_data_points) {
+void train_neural_network(float *network, training_data *data, u16 num_data_points) {
+    // Training data comes in an array of type training_data (holds two uint8_t)
     // NUM_EPOCHS is #define'd
     // num_data_points is num. data points captured in data capture mode
     for (u16 e=0; e<NUM_EPOCHS; e++){

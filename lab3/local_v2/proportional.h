@@ -40,7 +40,6 @@ typedef struct {
 typedef struct {
     int8_t left;
     int8_t right;
-
 } sensor_reading;
 
 void motor_dir(int16_t angle, int8_t *output);
