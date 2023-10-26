@@ -19,7 +19,7 @@ int main(void) {
 
 //    init();
     initialize_neural_network(&network); // set all weights to random
-    train_neural_network(&network, &data, MAX_TRAIN_DATA)
+    train_neural_network(&network, data, MAX_TRAIN_DATA);
 //    motor(MOTOR_L,0);
 //    motor(MOTOR_R,0);
 //    clear_screen();
@@ -47,8 +47,8 @@ int main(void) {
     for(data_size=0; data_size<MAX_TRAIN_DATA && !get_btn(); data_size++) {
         sensor_l = analog(PIN_SENSOR_L);
         sensor_r = analog(PIN_SENSOR_R);
-        data[data_size][0] = sensor_l;
-        data[data_size][1] = sensor_r;
+        data[data_size].left = sensor_l;
+        data[data_size].right = sensor_r;
 //        _delay_ms(TIMESTEP);
     }
 
