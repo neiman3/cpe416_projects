@@ -14,11 +14,12 @@ int main(void) {
     nn network;
     u08 sensor_l, sensor_r;
     u16 data_size; // number of data points to train on [0, MAX_TRAIN_DATA]
-    u08 data[MAX_TRAIN_DATA][2];    // left-right training data
+    sensor_reading data[MAX_TRAIN_DATA];    // left-right training data
     motor_command mc;
 
 //    init();
     initialize_neural_network(&network); // set all weights to random
+    train_neural_network(&network, &data, MAX_TRAIN_DATA)
 //    motor(MOTOR_L,0);
 //    motor(MOTOR_R,0);
 //    clear_screen();
