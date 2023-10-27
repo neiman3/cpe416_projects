@@ -85,56 +85,75 @@ void train_neural_network(nn *network, sensor_reading *data, u16 num_data_points
             // feed forward with data point
             motor_command network_output = compute_neural_network(data_point->left, data_point->right, network);
             // for each layer in the network, output layer first
-            for (u08 l=1; l>=0; l--) {
-                node *current_layer = &(network.layers[l]); // pointer to the current layer, a array of nodes of size LAYER_SIZE_A
-                for (u08 n=0; n<layer_size[l]; n++) {
+            for (int8_t l=1; l>=0; l--) {
+                node *current_layer = &(network->layers[l]); // pointer to the current layer, a array of nodes of size LAYER_SIZE_A
+                for (u08 n=0; n<network->layer_size[l]; n++) {
                     // for each node in the layer
                     node *current_node = &(current_layer[n]);
                     for (u08 w=0; w<current_node->num_weights; w++) {
                         // for each weight in the node:
-                        float derivative = compute_derivative(l, n, w, data_point, expected_value, network_output, network);
+                        float derivative = compute_derivative(l, n, w, data_point, &expected_value, &network_output, network);
                         // find derivative
                         // adjust by learning rate in correct sign
                         float old_weight = current_node->weights[w];
-                        current_node->weights[w] = old_weight - (LEARNING_RATE * derivative);
+                        current_node->new_weights[w] = old_weight - (float) (LEARNING_RATE * derivative);
                     }
                     // for the bias in the node
+                    current_node->new_bias = current_node->bias - (float) (LEARNING_RATE * compute_derivative(l, n, 255, data_point, &expected_value, &network_output, network));
                     // find derivative
                     // adjust by learning rate in correct sign
                 }
             }
         }
     }
+    // Now transfer new weights to old weights
+    for (u08 l=0; l<NUM_LAYERS; l++) {
+        node *current_layer = (network->layers[l]); // pointer to the current layer, a array of nodes of size LAYER_SIZE_A
+        for (u08 n = 0; n < network->layer_size[l]; n++) {
+            // for each node in the layer
+            node *current_node = &(current_layer[n]);
+            for (u08 w = 0; w < current_node->num_weights; w++) {
+                current_node->weights[w] = current_node->new_weights[w];
+            }
+            current_node->bias = current_node->new_bias;
+        }
+    }
 }
 
 float compute_derivative(u08 layer, u08 node, u08 weight_no, sensor_reading *input, motor_command *input_target, motor_command *output, nn *network) {
+    // pass in 255 (-1) as weight_no
     float dEt_dwn; // "slope" for node (resultant value for this function)
-    
-    node *current_node = &(network.layer[layer][node]); // get current node
-    float out = network.layer[layer][node]->out;
+//    node *current_node;
+//    current_node = &(network->layers[layer][node]); // get current node
+    float out = network->layers[layer][node].out;
     float target;
     float input_value;
-    (weight_no == 0) ? target = input_target->left : target = input_target->right; // get the expected value 0 or 1, left or right
-    (weight_no == 0) ? input_value = sensor_reading->left : input_value = sensor_reading->right; // get the input value 0 or 1, left or right
+    (node == 0) ? (target = input_target->left) : (target = input_target->right); // get the expected value 0 or 1, left or right
+    (weight_no == 0) ? (input_value = input->left) : (input_value = input->right); // get the input value 0 or 1, left or right
     if (layer == 1) {
         // OUTPUT LAYER CALCULATION
         // Assume weight_no is 0 or 1
         //              (error)         * (d/do sigmoid)    * (dout / d(weight[w]))[output  of h[w]]
-        float dEt_dwn = (out - target)  * (out * (1 - out)) * (network.layer[layer-1][weight_no]->out);
+        float dEt_douton = (out - target);
+        float douton_dneton = out * (1 - out);
+        float dneton_dwn;
+        dneton_dwn = (weight_no == 255) ? 1 : (network->layers[layer - 1][weight_no].out);
+        dEt_dwn = dEt_douton * douton_dneton * dneton_dwn;
 
     } else {
         // INPUT LAYER CALCULATION
-        float dEt_dwn=0;
         float dEt_douthn = 0;    // sum from each output
         for (u08 sum=0; sum<NUM_OUTPUTS; sum++) {
             // for outputs 0 and 1, sum 
             float dEon_douton=(out - target);
             float douton_dneton = (out * (1-out));
-            float dneton_douthn = node->network.layer[1][sum]->weights[node];
-            dEt_doutn += dEon_douton * douton_dneton * dneton_douthn;
+            float dneton_douthn;
+            dneton_douthn = (weight_no == 255) ? 1 : (network->layers[1][sum].weights[node]);
+            dEt_douthn += dEon_douton * douton_dneton * dneton_douthn;
         }
-        float out_hn = input_value;
-        dEt_dwn = dEt_douthn * out_hn * (1 - out_hn) * dnethn_dwn;
+        float dnethn_dwn = input_value;
+        float douthn_dnethn = network->layers[0][node].out;
+        dEt_dwn = dEt_douthn * douthn_dnethn * dnethn_dwn;
         
     }
 
