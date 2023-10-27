@@ -7,20 +7,23 @@ USB_ARR = $(shell ls /dev | grep cu.usb)
 MAC_DEVICE = `ls /dev/$(USB_ARR)`
 LAB = lab3
 
+local: lab3/test.c
+	cc lab3/test.c -o main.o lab3/neuralnet.c lab3/proportional.c
+
 main: main.c $(wildcard $(BOARD_LIB)/*.c)
 	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf main.c $(wildcard $(BOARD_LIB)/*.c)
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 
 p1: $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c)
-	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c) ./lab3/proportional.c
+	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/proportional.c
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex
 
 
 p2: $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c)
-	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/proportional.c ./$(LAB)/neuralnet.c
+	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part2.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/progressbar.c ./$(LAB)/proportional.c ./$(LAB)/neuralnet.c
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex

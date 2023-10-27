@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "globals.h": "c",
-        "stdio.h": "c",
-        "math.h": "c",
-        "proportional.h": "c",
-        "ios": "c"
-    }
-}

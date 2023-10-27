@@ -1,1 +1,0 @@
-add_executable(part2 lab3_part2.c neuralnet.c proportional.c)

@@ -1,5 +1,10 @@
-#ifndef PROPORTIONAL_H
-#define PROPORTIONAL_H
+//
+// Created by Alex Neiman on 10/24/23.
+//
+
+#ifndef LOCAL_V2_PROPORTIONAL_H
+#define LOCAL_V2_PROPORTIONAL_H
+
 
 #include "../library/globals.h"
 #include <math.h>
@@ -32,6 +37,11 @@ typedef struct {
 
 } motor_command;
 
+typedef struct {
+    uint8_t left;
+    uint8_t right;
+} sensor_reading;
+
 void motor_dir(int16_t angle, int8_t *output);
 void motor(uint8_t num, int8_t speed);
 void time_advance(u16 *array, u16 new_value);
@@ -46,4 +56,4 @@ int16_t derivative_error(u16 *array, u16 setpoint);
 motor_command compute_proportional(u08 left_value, u08 right_value);
 void debug(char *string, u16 value);
 
-#endif
+#endif //LOCAL_V2_PROPORTIONAL_H

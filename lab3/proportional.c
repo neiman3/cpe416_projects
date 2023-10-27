@@ -1,7 +1,12 @@
+//
+// Created by Alex Neiman on 10/24/23.
+//
+
 #include "proportional.h"
+#define LOCAL
 
 /**
- * 
+ *
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
@@ -34,7 +39,7 @@ int16_t max(int16_t arg1, int16_t arg2) {
 }
 
 int16_t bound(int16_t arg, int16_t minimum, int16_t maximum) {
-    
+
     return max(minimum, min(maximum, arg));
 }
 
@@ -45,7 +50,7 @@ void motor_dir(int16_t angle, int8_t *output) {
     // robot is turning with two radii so it's not really an angle...
     // debugging mode = if button pressed, disable motor
     angle = bound(angle, -100, 100);
-    
+
     int16_t power_l = FWD_SPEED;
     int16_t power_r = FWD_SPEED;
 
@@ -67,6 +72,19 @@ void motor_dir(int16_t angle, int8_t *output) {
     output[1] = power_r;
     return;
 }
+#ifndef LOCAL
+void motor(uint8_t num, int8_t speed) {
+    int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
+    if (num == 1) { // selected first wheel
+        // reverse right wheel
+        set_servo(num, 255 - sp - 1);
+    } else {
+        set_servo(num, sp);
+    }
+    return;
+}
+
+#endif
 
 
 void time_advance(u16 *array, u16 new_value) {
@@ -90,7 +108,7 @@ int16_t integral_error(u16 *array, u16 setpoint) {
     }
     result = result / HISTORY_LENGTH;
     return result;
-    
+
 }
 
 int16_t derivative_error(u16 *array, u16 setpoint) {
@@ -99,11 +117,11 @@ int16_t derivative_error(u16 *array, u16 setpoint) {
 }
 
 motor_command compute_proportional(u08 left_value, u08 right_value) {
-    
+
     u08 sensor_value[2] = {left_value, right_value};
     int8_t output[2];
 
-    // control variables 
+    // control variables
     int16_t theta_deg = 0; // proportiona
     // int16_t theta_deg_d = 0; // derivative
     // int16_t theta_deg_i = 0; // integral
@@ -121,7 +139,7 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
     // bound
     sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
     sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
-    
+
 
     // calculate 2d mapping transformation of angular difference of sensor reading
     theta = calculate_theta(sensor_value[0], VWL_set, sensor_value[1], VWR_set);
@@ -133,12 +151,14 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
     vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
 
 
-    if(vstate < VSTATE_B_B_set) {  
+    if(vstate < VSTATE_B_B_set) {
         // black on black or tape crossing
         // go forward blindly
         // OUTPUT MOTOR DIR 0
+        #ifndef LOCAL
         motor_dir(0, output);
-        
+        #endif
+
     } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
         //        // neither sensor reading the tape (white-white case)
         // spin in the direction of side_last_found
@@ -146,7 +166,7 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
         // OUTPUT MOTOR DIR SPIN LEFT ONLY
         output[0] = 0;
         output[1] = FWD_SPEED;
-            
+
     } else {
         motor_dir(((int16_t) theta_deg) * GAIN_KP_NUM / GAIN_KP_DEN, output);
     }
@@ -156,14 +176,3 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
 
 
 
-
-void motor(uint8_t num, int8_t speed) {
-    int32_t sp = ((int32_t) speed * SERVO_CAL / 200) + 127;
-    if (num == 1) { // selected first wheel
-        // reverse right wheel
-        set_servo(num, 255 - sp - 1);
-    } else {
-        set_servo(num, sp);
-    }
-    return;
-}
