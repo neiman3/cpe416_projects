@@ -151,7 +151,8 @@ float compute_derivative(u08 layer, u08 node, u08 weight_no, sensor_reading *inp
     float out = network->layers[layer][node].out;
     float target;
     float input_value;
-    (node == 0) ? (target = input_target->left) : (target = input_target->right); // get the expected value 0 or 1, left or right
+    (node == 0) ? (target = sinput_target->left) : (target = input_target->right); // get the expected value 0 or 1, left or right
+    // The input target should be mapped as a float
     (weight_no == 0) ? (input_value = input->left) : (input_value = input->right); // get the input value 0 or 1, left or right
     if (layer == 1) {
         // OUTPUT LAYER CALCULATION

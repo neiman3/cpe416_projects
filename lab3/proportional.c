@@ -174,5 +174,14 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
     return result;
 }
 
+uint8_t map_float_to_servo_int(float input_value) {
+    // FWD_SPEED should be 0.5 (default), with off beign 0 and full speed being 1
+    return bound((uint8_t) (input_value * 2 * FWD_SPEED), 0, 2* FWD_SPEED);
+}
+
+float map_servo_int_to_float(uint8_t input_value) {
+    // FWD_SPEED should be 0.5 (default), with off beign 0 and full speed being 1
+    return ((float) input_value / (2 * FWD_SPEED));
+}
 
 
