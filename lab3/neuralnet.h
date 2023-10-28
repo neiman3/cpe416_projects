@@ -11,7 +11,7 @@
 #define NUM_OUTPUTS     2
 #define MIN_EPOCHS      100
 #define MAX_EPOCHS     1000
-#define LEARNING_RATE   0.2
+#define LEARNING_RATE   0.15
 #define LOCAL
 
 #include "../library/globals.h"

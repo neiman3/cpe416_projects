@@ -2,8 +2,10 @@
 // Created by Alex Neiman on 10/24/23.
 //
 
+#include "neuralnet.h"
 #include "proportional.h"
 #define LOCAL
+
 
 /**
  *
@@ -185,3 +187,4 @@ float map_servo_int_to_float(uint8_t input_value) {
 }
 
 
+float map_sensor_reading_to_float(u08 left) { return (float) (left - VWL) / (VBL - VWL); }

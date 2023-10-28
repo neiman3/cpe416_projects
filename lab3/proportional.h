@@ -57,5 +57,7 @@ motor_command compute_proportional(u08 left_value, u08 right_value);
 void debug(char *string, u16 value);
 uint8_t map_float_to_servo_int(float input_value);
 float map_servo_int_to_float(uint8_t input_value);
+float map_sensor_reading_to_float(u08 left);
+
 
 #endif //LOCAL_V2_PROPORTIONAL_H
