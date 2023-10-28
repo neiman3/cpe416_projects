@@ -57,8 +57,8 @@ motor_command compute_neural_network(u08 left, u08 right, nn *network) {
         }
     }
 
-    cmd.left = (int8_t) (output[0] * 100);
-    cmd.right = (int8_t) (output[1] * 100);
+    cmd.left = (int8_t) map_float_to_servo_int(output[0] * 100);
+    cmd.right = (int8_t) map_float_to_servo_int(output[1] * 100);
 
     return cmd;
 }
@@ -113,6 +113,9 @@ void train_neural_network(nn *network, sensor_reading *data, u16 num_data_points
                 }
                 update_weights(network);
             }
+            #ifdef LOCAL
+            printf("w1 value: %f\n", network->layers[0][0].weights[0]);
+            #endif
         }
     }
     // Now transfer new weights to old weights
@@ -151,7 +154,7 @@ float compute_derivative(u08 layer, u08 node, u08 weight_no, sensor_reading *inp
     float out = network->layers[layer][node].out;
     float target;
     float input_value;
-    (node == 0) ? (target = sinput_target->left) : (target = input_target->right); // get the expected value 0 or 1, left or right
+    (node == 0) ? (target = map_servo_int_to_float(input_target->left)) : (target = map_servo_int_to_float(input_target->right)); // get the expected value 0 or 1, left or right
     // The input target should be mapped as a float
     (weight_no == 0) ? (input_value = input->left) : (input_value = input->right); // get the input value 0 or 1, left or right
     if (layer == 1) {

@@ -12,6 +12,7 @@
 #define MIN_EPOCHS      100
 #define MAX_EPOCHS     1000
 #define LEARNING_RATE   0.2
+#define LOCAL
 
 #include "../library/globals.h"
 #include "proportional.h"
@@ -19,6 +20,10 @@
 #include <stdlib.h>
 #include "proportional.h"
 #include "progressbar.h"
+#ifdef LOCAL
+#include <stdio.h>
+#endif
+
 
 // #define DE_DOUT 0
 
