@@ -9,10 +9,10 @@
 #define LAYER_SIZE_B    2
 #define NUM_INPUTS      2
 #define NUM_OUTPUTS     2
-#define MIN_EPOCHS      100
-#define MAX_EPOCHS     1000
+#define MIN_EPOCHS      1
+#define MAX_EPOCHS     50
 #define LEARNING_RATE   0.15
-#define LOCAL
+// #define LOCAL
 
 #include "../library/globals.h"
 #include "proportional.h"

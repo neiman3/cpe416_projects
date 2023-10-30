@@ -4,7 +4,7 @@
 
 #include "neuralnet.h"
 #include "proportional.h"
-#define LOCAL
+// #define LOCAL
 
 
 /**

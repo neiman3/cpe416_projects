@@ -80,8 +80,11 @@ void train_neural_network(nn *network, sensor_reading *data, u16 num_data_points
     for (u16 e=0; e<num_epochs; e++) {
         // for each epoch
 #ifndef LOCAL
-        lcd_cursor(4,1); print_num(e);
-        progress_bar(e, num_epochs, 4, 0, 1, timer, 1);
+        if (e<10) lcd_cursor(7,0);
+        else if (e < 100) lcd_cursor(6,0);
+        else lcd_cursor(5,0);        
+        print_num(e);
+        progress_bar(e, num_epochs, 8, 0, 1, timer, 1);
 #endif
         for (u16 p = 0; p < num_data_points; p++) {
             timer++;

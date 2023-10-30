@@ -30,8 +30,8 @@
 #define MAX_TRAIN_DATA  100 // maximum number of training data points
 #define TIMESTEP 10
 
-#define DEBUG 1     // 0 -> normal run, 1 -> use DB vals
-#define DB_EPOCHS 201
+#define DEBUG 0     // 0 -> normal run, 1 -> use DB vals
+#define DB_EPOCHS 10
 
 int main(void) {
     // Declarations
@@ -53,7 +53,10 @@ int main(void) {
     
     // Demo mode- proportional control
     if(!DEBUG) {
-        lcd_cursor(0,0); print_string("Proportional");
+        clear_screen();
+        lcd_cursor(0,0); print_string("Prop.");
+        lcd_cursor(0,1); print_string("Control");
+
         while(!get_btn()) {
             sensor_l = analog(PIN_SENSOR_L);
             sensor_r = analog(PIN_SENSOR_R);
@@ -70,8 +73,12 @@ int main(void) {
     clear_screen();
     lcd_cursor(0,0);
     print_string("Data");
+    lcd_cursor(0,1);
+    print_string("Collectn");
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
+    _delay_ms(1000);
+    clear_screen();
     for(data_size=0; data_size<MAX_TRAIN_DATA && !get_btn(); data_size++) {
         sensor_l = analog(PIN_SENSOR_L);
         sensor_r = analog(PIN_SENSOR_R);
@@ -88,26 +95,30 @@ int main(void) {
     while(get_btn()) _delay_ms(50);
     clear_screen();
 
-    if (DEBUG) {
-        for (u16 i=0; i<data_size;i++){
-            clear_screen();
-            lcd_cursor(0,0);
-            print_num(data[i].left);
-            lcd_cursor(0,1);
-            print_num(i);
-            lcd_cursor(4,0);
-            print_num(data[i].right);
-            _delay_ms(100);
+    // Debug mode data dump
+    // if (DEBUG) {
+    //     for (u16 i=0; i<data_size;i++){
+    //         clear_screen();
+    //         lcd_cursor(0,0);
+    //         print_num(data[i].left);
+    //         lcd_cursor(0,1);
+    //         print_num(i);
+    //         lcd_cursor(4,0);
+    //         print_num(data[i].right);
+    //         _delay_ms(100);
 
-        }
-    }
+    //     }
+    // }
 
     // Main loop
+    initialize_neural_network(&network); // set all weights to random
+
     while(1) {
        // Select number of epochs 
         if(!DEBUG) {
+            clear_screen();
             lcd_cursor(0,0);
-            print_string("Train");
+            print_string("NumEpoch");
             motor(MOTOR_L, 0);
             motor(MOTOR_R, 0);
             while(!get_btn()) {
@@ -125,9 +136,9 @@ int main(void) {
                 epochs += dir_x;
                 epochs = min(max(MIN_EPOCHS, epochs), MAX_EPOCHS);
                 lcd_cursor(0,1);
-                print_num(epochs);
+                print_num(epochs);print_string("  ");
 
-                _delay_ms(TIMESTEP);
+                _delay_ms(TIMESTEP*10);
             }
         } else {
             epochs = DB_EPOCHS;
@@ -138,17 +149,18 @@ int main(void) {
 
 
         // Run training algorithm
-        lcd_cursor(0,0); print_string("Training");
-        initialize_neural_network(&network); // set all weights to random
+        lcd_cursor(0,0); print_string("Train   ");
         train_neural_network(&network, data, data_size, epochs);
+
 
         // Run ML line following mode
         clear_screen();
         while(!get_btn()) {
-            sensor_l = analog(PIN_SENSOR_L); lcd_cursor(0,0); print_num(sensor_l);
-            sensor_r = analog(PIN_SENSOR_R); lcd_cursor(4,0); print_num(sensor_r);
+            // while(1) {
+            sensor_l = analog(PIN_SENSOR_L);// lcd_cursor(0,0); print_num(sensor_l);
+            sensor_r = analog(PIN_SENSOR_R);// lcd_cursor(4,0); print_num(sensor_r);
             mc = compute_neural_network(sensor_l, sensor_r, &network);
-            motor(MOTOR_L, mc.left); lcd_cursor(0,1); print_num(mc.left);
+            motor(MOTOR_L, mc.left); lcd_cursor(0,1); print_string("       "); lcd_cursor(0,1); print_num(mc.left);
             motor(MOTOR_R, mc.right);lcd_cursor(4,1); print_num(mc.right);
             _delay_ms(TIMESTEP);
         }
