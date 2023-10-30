@@ -3,7 +3,13 @@
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 3 Part 2: Neural network line following
+ *   Lab 3 Part 2: Neural network line following. 
+ * 
+ * 1. demo proportional control (btn) ->
+ * 2. Data collection- manual line data gathering 
+ *      Collects up to 100 sensor readings. Press button to stop or collect all 100 readings ->
+ * Loop { 3. Select num epochs and train network on data set (accel and button)
+ *        4. Run line following with neural network (btn) -> restart loop
  *
  **/
 

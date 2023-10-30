@@ -1,3 +1,15 @@
+/**
+ * 
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Lab 3 Part 1: Proportional struct testing. 
+ *      Test the motor_command struct and the compute_proportional command
+ *         ( wrapper for Lab2 in a single function )
+ *
+ **/
+
+
 #include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>

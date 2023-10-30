@@ -1,6 +1,13 @@
-//
-// Created by Alex Neiman on 10/24/23.
-//
+/**
+ * 
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Lab 3 Part 2: Neural network line following. 
+ *     
+ *      Neural network library header. Contains structures for network.
+ *
+ **/
 
 #ifndef LOCAL_V2_NEURALNET_H
 #define LOCAL_V2_NEURALNET_H

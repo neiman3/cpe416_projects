@@ -1,6 +1,4 @@
-//
-// Created by Alex Neiman on 10/24/23.
-//
+
 
 #include "neuralnet.h"
 #include "proportional.h"
@@ -12,7 +10,7 @@
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 3 ANN training
+ *   Lab 3 ANN training basis (can calculate target/training values)
  *
  **/
 

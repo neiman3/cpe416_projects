@@ -1,4 +1,4 @@
-// #define LOCAL
+// Header for progressbar.c
 
 #ifndef _PROGRESSBAR_H
 #define _PROGRESSBAR_H

@@ -1,3 +1,17 @@
+/**
+ * 
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Lab 3 Part 2: Neural network line following. 
+ *     
+ *      Progress bar function. Displays spinning char with equal sign to signify progress of a task.
+ *      Pick location on the screen, width, and enter your current and max progress variables as arguments.
+ *      The function will also require an unsigned 8 bit timer variable that should be independently incremented
+ *      or timed outside of this function. 64 increments will advance the animation by one frame- calciualte accordingly 
+ *
+ **/
+
 #include "progressbar.h"
 #ifndef LOCAL
 void progress_bar(uint16_t current, uint16_t max, u08 display_width,  u08 display_column, u08 display_row, u08 timer, u08 option_animation) {

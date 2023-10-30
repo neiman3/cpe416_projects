@@ -1,5 +1,5 @@
 //
-// Created by Alex Neiman on 10/24/23.
+// Header file for proportional.c
 //
 
 #ifndef LOCAL_V2_PROPORTIONAL_H

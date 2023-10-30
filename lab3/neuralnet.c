@@ -1,6 +1,13 @@
-//
-// Created by Alex Neiman on 10/24/23.
-//
+/**
+ * 
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Lab 3 Part 2: Neural network line following. 
+ *     
+ *      Neural network library functions. Contains initialize, train, and compute functions.
+ *
+ **/
 
 #include "neuralnet.h"
 #include "proportional.h"
