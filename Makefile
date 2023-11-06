@@ -5,7 +5,7 @@ CLOCK_RATE = 16000000L
 #edit the device to match the device on your computer
 USB_ARR = $(shell ls /dev | grep cu.usb)
 MAC_DEVICE = `ls /dev/$(USB_ARR)`
-LAB = lab3
+LAB = lab4
 
 local: lab3/test.c
 	cc lab3/test.c -o main.o lab3/neuralnet.c lab3/proportional.c
