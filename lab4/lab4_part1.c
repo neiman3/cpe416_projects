@@ -27,6 +27,12 @@
 
 #define TIMESTEP        10
 
+typedef struct
+{
+    uint16_t position;
+    uint8_t target;
+} tower;
+
 volatile uint16_t left_encoder = 0;
 volatile uint16_t right_encoder = 0;
 
@@ -79,6 +85,8 @@ int main(void) {
     clear_screen(); 
 
     while(1) {
+
+
         sensor_l = analog(PIN_SENSOR_L);
         sensor_r = analog(PIN_SENSOR_R);
         motor_command mc = compute_proportional(sensor_l, sensor_r);
