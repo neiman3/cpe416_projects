@@ -27,10 +27,13 @@
 
 #define TIMESTEP        10
 
+#define MAX_NUM_TOWERS  4
+
 typedef struct
 {
     uint16_t position;
     uint8_t target;
+    uint8_t active;
 } tower;
 
 volatile uint16_t left_encoder = 0;
@@ -73,9 +76,47 @@ int8_t read_accel(uint8_t scale) {
     return dir_x * scale / 38;
 }
 
+void sensor_test() {
+    sensor_l = analog(PIN_SENSOR_L);
+    sensor_r = analog(PIN_SENSOR_R);
+    motor_command mc = compute_proportional(sensor_l, sensor_r);
+    // motor(MOTOR_L, mc.left);
+    // motor(MOTOR_R, mc.right);
+    // right encoder test
+    // motor(MOTOR_R, 20);
+    lcd_cursor(0,0);print_num(right_encoder);print_string("    ");
+    lcd_cursor(0,1);print_num(read_accel(10));print_string("    ");
+    lcd_cursor(4,0);print_num(analog(PIN_SENSOR_DIST));print_string("    ");
+    _delay_ms(TIMESTEP);
+}
+
 int main(void) {
 
     u08 sensor_l, sensor_r;
+    tower towers[MAX_NUM_TOWERS];
+    // for (int i=0; i< MAX_NUM_TOWERS; i++){
+    //     // reset all towers
+    // }
+
+
+    // hard code input data for now
+    // Tower 1 at 15º
+    // Tower 2 (vader) at 135º
+    // Tower 3 at 180º
+    // Tower 4 not enabled
+    tower[0].position = 15;
+    tower[0].active = 1;
+    tower[0].target = 0;
+    tower[1].position = 135;
+    tower[1].active = 1;
+    tower[1].target = 1;
+    tower[2].position = 180;
+    tower[2].active = 1;
+    tower[2].target = 1;
+    tower[3].position = 0;
+    tower[3].active = 0;
+    tower[3].target = 0;
+    
 
 
     init();
@@ -87,21 +128,7 @@ int main(void) {
     while(1) {
 
 
-        sensor_l = analog(PIN_SENSOR_L);
-        sensor_r = analog(PIN_SENSOR_R);
-        motor_command mc = compute_proportional(sensor_l, sensor_r);
-        // motor(MOTOR_L, mc.left);
-        // motor(MOTOR_R, mc.right);
-
-        // right encoder test
-        // motor(MOTOR_R, 20);
-
-        lcd_cursor(0,0);print_num(right_encoder);print_string("    ");
-        lcd_cursor(0,1);print_num(read_accel(10));print_string("    ");
-        lcd_cursor(4,0);print_num(analog(PIN_SENSOR_DIST));print_string("    ");
-
-
-        _delay_ms(TIMESTEP);
+        
     }
 
    return 0;
