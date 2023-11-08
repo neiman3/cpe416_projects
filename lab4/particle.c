@@ -1,13 +1,13 @@
 #include "particle.h"
 
-float map(int16_t input, int16_t input_range_min, int16_t input_range_max, float output_range_min, float output_range_max) {
-    // Map: floor an input integer between two values and linearly interpolate it to the specified range
-    // example: map(input=10, input_range_min=0, input_range_max=20, output_range_min=0 float output_range_max=1)
-    //          |--->  0.5
+// Map: floor an input integer between two values and linearly interpolate it to the specified range
+// example: map(input=10, input_range_min=0, input_range_max=20, output_range_min=0 float output_range_max=1)
+//          |--->  0.5
+float map(uint16_t input, uint16_t input_range_min, uint16_t input_range_max, float output_range_min, float output_range_max) {
     uint16_t input_floor;
     if (input < input_range_min) {
         input_floor = input_range_min;
-    } else if (input > input_range_max){
+    } else if (input > input_range_max) {
         input_floor = input_range_max;
     } else {
         input_floor = input;
@@ -16,9 +16,9 @@ float map(int16_t input, int16_t input_range_min, int16_t input_range_max, float
     return ((float) (input_floor - input_range_min) / (float) (input_range_max - input_range_min)) * (output_range_max - output_range_min) + output_range_min;
 }
 
-// Wrap a 0xffff
+// Wrap a 0xffff (32 bit) fixed point numer to 360º
 float fixed_point_pos_to_float(uint16_t data) {
-    return map((int16_t) data, MIN_POSITION, MAX_POSITION, 0, 360);
+    return map(data, MIN_POSITION, MAX_POSITION, 0, 360);
 }
 uint16_t float_to_fixed_point_pos(float data) {
     return (uint16_t) (data * MN_CONV_FACTOR); // magic number = 50,000 / 360.0
@@ -32,54 +32,85 @@ void init_particles(particle *data, uint8_t num_particles, tower *tower_position
 
     for(int i=0; i<num_particles; i++) {
         // not currently using noise
-        pos = map((int16_t) i, 0, num_particles, 0, 360);
+        pos = map(i, 0, num_particles, 0, 360);
         data[i].position = float_to_fixed_point_pos(pos);
-        data[i].weight = float_to_fixed_point_pos((float) 1.0 / (float) num_particles);
+        data[i].weight = (float) 1.0 / (float) num_particles;
         data[i].expectation = calculate_position_probability(pos, tower_positions, num_towers);
     }
 }
 
 // Generate a set of new particles with most of them centered around the previous highly weighted particles
-void resample(particle *data, uint8_t num_particles) {
-    sort_particles(data, 0,num_particles);
-    
+void resample(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
+    // TODO: Test
+    // Normalize particle weights before start
+    normalize_particle_weights(data, num_particles);
+    // Sort particles from high to low by weight
+    sort_particles(data, 0, 0, num_particles);
+
+    // Insert particles proportional to their weight, replacing lowest particles
+    uint8_t counter=0;
+    uint8_t num_inserts;
+    while (counter < num_particles) {
+        num_inserts = (uint8_t) (data[counter].weight * num_particles); // number of times to insert the new particle (by weight)
+        for (int i = 0; i<num_inserts & counter<num_particles;i++) {
+            duplicate_particle(data, num_particles, &data[counter]);
+            counter++;
+        }
+    }
+
+    // normalize
+    normalize_particle_weights(data, num_particles);
+
+    // Add 5% random particles
+    uint8_t random_index;
+    float random_position;
+    for (uint8_t i=0; i<(uint8_t) ((uint16_t) (NUM_PARTICLES * 5 / 100)); i++) {
+        // pick a random particle and seed it with uniform weight, random position
+        random_index = (uint8_t) (NUM_PARTICLES * (float) (uint32_t) rand() / (float) RAND_MAX);
+        random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
+        data[random_index].weight = (float) 1.0 / (float) NUM_PARTICLES;
+        data[random_index].position = float_to_fixed_point_pos(random_position);
+        data[random_index].expectation = calculate_position_probability(random_position, tower_positions, num_towers);
+    }
+
+    // normalize finally, again (since we inserted new particles and weights)
+    normalize_particle_weights(data, num_particles);
 }
 
 // Quick sort implementation to sort particles by their weights
-void sort_particles(particle *data, uint8_t start, uint8_t end) {
-    uint8_t pivot;
-    if(num_particles <= 1 || start >= end)
-        return;
-    pivot = partition(data, start, end);
-    sort_particles(data, start, pivot-1);
-    sort_particles(data, pivot+1, end);
+void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_t stop) {
+    // TODO: Write sort algorithm
+    // Uncommented temporary to allow compiling
+//    uint8_t pivot;
+//    if(num_particles <= 1 || start >= stop)
+//        return;
+//    pivot = partition(data, start, stop);
+//    sort_particles(data, 0, start, pivot - 1);
+//    sort_particles(data, 0, pivot + 1, stop);
 }
 
 // helper for sort_particles()
 void partition(particle *data, uint8_t start, uint8_t end) {
-    uint8_t pivot_i = start;
-    float pivot_wt = data[end]->weight;
-    for(u08 i=start; i<end; i++) {
-        if(data[i] < pivot_wt) {
-            swap_particles(data[pivot_i], data[i]);
-            pivot_i++;
-        }
-    }
+//    uint8_t pivot_i = start;
+//    float pivot_wt = data[end]->weight;
+//    for(u08 i=start; i<end; i++) {
+//        if(data[i] < pivot_wt) {
+//            swap_particles(data[pivot_i], data[i]);
+//            pivot_i++;
+//        }
+//    }
 }
 
 // Takes an array of sorted particles and a pointer to a single particle.
 // Inserts a duplicate particle after the target, overwriting the last particle.
 void duplicate_particle(particle *data, uint8_t num_particles, particle *target_position) {
-    // 
-    uint8_t found=0;
-    for (int i=0; i< num_particles; i++){
-        // iterate through the list until we find the specified particle
-        if (!found) {
-            if (&data+i == target_position) { // Do the pointers match?
-                found = 1;
-            }
-        } else {
-            
+    // Start from bottom of the list
+    for (int i=num_particles-1; i>0; i--) {
+        // Replace current particle with particle ahead of it
+        data[i] = data[i-1];
+        // Look ahead to next particle and see if it is our target particle
+        if ((data + i - 1) == target_position) { // Do the pointers match?
+            return; // exit now
         }
     }
 }
@@ -113,10 +144,10 @@ void motion_update(particle *data, uint8_t num_particles, uint16_t position_delt
     float pos=0;
     for (int i=0; i<num_particles; i++){
         // for each particle:
-        pos = fixed_point_pos_to_float([i].position); // convert stored uint16 to float degrees
-        pos += (float) position_delta * 0.739766779; // add the robot position delta (converted to degrees) to particle position 
-        pos = add_noise(pos, 0.013909689); // Apply noise based on the motion model
-        data[i].position = float_to_fixed_point(wrap_degrees(pos)); // Wrap degrees (0-360) and convert back to uint16. Restore
+        pos = fixed_point_pos_to_float(data[i].position); // convert stored uint16 to float degrees
+        pos += (float) position_delta * (float) 0.7397667; // add the robot position delta (converted to degrees) to particle position
+        pos = add_noise(pos, (float) 0.013909689); // Apply noise based on the motion model
+        data[i].position = float_to_fixed_point_pos(wrap_degrees(pos)); // Wrap degrees (0-360) and convert back to uint16. Restore
     }
 }
 
@@ -138,7 +169,7 @@ float calculate_position_probability(float particle_position, tower *tower_posit
     if (result > 1) {
         result = 1; // just in case there are improperly defined tower locations that are not disjoint and P>1
     }
-    
+    return result;
 }
 
 // Trapezoidal approximation
@@ -166,7 +197,7 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 
 // Calculate the likelyhood of a tower given a sensor reading
 float calculate_sensor_probability(uint8_t sensor_reading, particle *data) {
-    
+
 }
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)
@@ -178,4 +209,24 @@ float wrap_degrees(float data) {
         data -= 360;
     }
     return data;
+}
+
+// Normalize weights.
+void normalize_particle_weights(particle *data, uint8_t num_particles) {
+    float sum=0;
+    for (uint8_t i=0;i<num_particles;i++){
+        sum += data[i].weight;
+    }
+    for (uint8_t i=0;i<num_particles;i++){
+        data[i].weight = data[i].weight / sum;
+    }
+}
+
+
+float mean(particle *data, uint8_t num_particles) {
+    // TODO: Write
+}
+
+float stdev(particle *data, uint8_t num_particles) {
+    // TODO: Write
 }

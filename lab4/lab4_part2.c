@@ -1,9 +1,9 @@
 /**
- * 
+ *
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 3 Part 1: Proportional struct testing. 
+ *   Lab 3 Part 1: Proportional struct testing.
  *      Test the motor_command struct and the compute_proportional command
  *         ( wrapper for Lab2 in a single function )
  *
@@ -11,14 +11,17 @@
 #define LOCAL
 
 #include "../library/globals.h"
+#include <math.h>
+#include "proportional.h"
+#include "particle.h"
 #ifndef LOCAL
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #endif
-#include <math.h>
-#include "proportional.h"
-#include "particle.h"
+#ifdef LOCAL
+#include <stdio.h>
+#endif
 
 #define PIN_SENSOR_L    3
 #define PIN_SENSOR_R    4
@@ -103,32 +106,34 @@ int main(void) {
     // Tower 2 (vader) at 135º
     // Tower 3 at 180º
     // Tower 4 not enabled
-    towers[0].position = 15;
+    towers[0].position = float_to_fixed_point_pos(15);
     towers[0].active = 1;
     towers[0].target = 0;
-    towers[1].position = 135;
+    towers[1].position = float_to_fixed_point_pos(135);
     towers[1].active = 1;
     towers[1].target = 1;
-    towers[2].position = 180;
+    towers[2].position = float_to_fixed_point_pos(180);
     towers[2].active = 1;
     towers[2].target = 1;
     towers[3].position = 0;
     towers[3].active = 0;
     towers[3].target = 0;
-    
 
-    #ifndef LOCAL
+    particle particles[NUM_PARTICLES]; // initialize array
+    init_particles(particles, NUM_PARTICLES, towers, 3);
+
+#ifndef LOCAL
     init();
     init_encoder();
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
-    clear_screen(); 
-    #endif
+    clear_screen();
+#endif
 
-    while(1) {
-        sensor_test();
-    }
+//    while(1) {
+//
+//    }
 
-   return 0;
+    return 0;
 }
 

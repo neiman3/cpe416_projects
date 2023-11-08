@@ -1,14 +1,14 @@
 /**
- * 
+ *
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 3 Part 2: Neural network line following. 
- *     
+ *   Lab 3 Part 2: Neural network line following.
+ *
  *      Progress bar function. Displays spinning char with equal sign to signify progress of a task.
  *      Pick location on the screen, width, and enter your current and max progress variables as arguments.
  *      The function will also require an unsigned 8 bit timer variable that should be independently incremented
- *      or timed outside of this function. 64 increments will advance the animation by one frame- calciualte accordingly 
+ *      or timed outside of this function. 64 increments will advance the animation by one frame- calciualte accordingly
  *
  **/
 
@@ -21,7 +21,7 @@ void progress_bar(uint16_t current, uint16_t max, u08 display_width,  u08 displa
         print_string("=");
     }
     if (option_animation) {
-        // scroll - \ | / 
+        // scroll - \ | /
         if (timer < 63) {
             print_string("-");
         } else if (timer < 127) {

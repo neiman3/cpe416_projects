@@ -1,9 +1,13 @@
+//
+// Created by Alex Neiman and Beck Dehlsen on 11/8/23.
+//
+
+
 #define LOCAL
 
-#ifndef _PARTICLE_H
-#define _PARTICLE_H
+#ifndef PARTICLE_H
+#define PARTICLE_H
 #include "../library/globals.h"
-#include "proportional.h"
 #include <math.h>
 #include <stdlib.h>
 #include "proportional.h"
@@ -18,6 +22,8 @@
 //particle's position on the circle, ~16 bit precision
 #define MIN_POSITION (uint16_t) 0
 #define MAX_POSITION (uint16_t) 50000
+
+#define NUM_PARTICLES 100
 
 #define MN_CONV_FACTOR ((float) MAX_POSITION / 360.0)
 
@@ -38,17 +44,21 @@ typedef struct
 } particle;
 
 void init_particles(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers);
-void resample(particle *data, uint8_t num_particles);
+void resample(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers);
 void motion_update(particle *data, uint8_t num_particles, uint16_t position_delta);
 void duplicate_particle(particle *data, uint8_t num_particles, particle *target_position);
-void sort_particles(particle *data, uint8_t start, uint8_t end);
-float map(int16_t input, int16_t input_range_min, int16_t input_range_max, float output_range_min, float output_range_max);
+void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_t stop);
+void normalize_particle_weights(particle *data, uint8_t num_particles);
+void partition(particle *data, uint8_t start, uint8_t end);
+float map(uint16_t input, uint16_t input_range_min, uint16_t input_range_max, float output_range_min, float output_range_max);
 float add_noise(float input_value, float stdev);
 float calculate_position_probability(float particle_position, tower *tower_positions, uint8_t number_of_towers);
 float calculate_sensor_probability(uint8_t sensor_reading, particle *data);
 float fixed_point_pos_to_float(uint16_t data);
 float trapezoidal_pdf(float theta_read, float theta_tower);
 float wrap_degrees(float data);
+float mean(particle *data, uint8_t num_particles);
+float stdev(particle *data, uint8_t num_particles);
 uint16_t float_to_fixed_point_pos(float data);
 
 #endif

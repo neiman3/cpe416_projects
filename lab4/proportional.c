@@ -1,6 +1,5 @@
 
-
-#include "neuralnet.h"
+#include <math.h>
 #include "proportional.h"
 // #define LOCAL
 
@@ -155,9 +154,9 @@ motor_command compute_proportional(u08 left_value, u08 right_value) {
         // black on black or tape crossing
         // go forward blindly
         // OUTPUT MOTOR DIR 0
-        #ifndef LOCAL
+#ifndef LOCAL
         motor_dir(0, output);
-        #endif
+#endif
 
     } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
         //        // neither sensor reading the tape (white-white case)

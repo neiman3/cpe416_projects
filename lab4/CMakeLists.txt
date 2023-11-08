@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.13)  # CMake version check
-project(simple_example)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+cmake_minimum_required(VERSION 3.26)
+project(lab4 C)
 
-# Add main.cpp file of the project root directory as a source file
-set(SOURCE_FILES test.c neuralnet.c neuralnet.h progressbar.c progressbar.h proportional.c proportional.h training_data.h
-        particle.c)
+set(CMAKE_C_STANDARD 11)
 
-# Add executable target with source files listed in SOURCE_FILES variable
-add_executable(simple_example ${SOURCE_FILES})
+add_executable(lab4 lab4_part2.c
+        particle.c
+        particle.h
+        proportional.c
+        proportional.h
+        progressbar.c
+        progressbar.h)
