@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3/cmake-build-debug"
+			"value" : "/Users/neiman/Documents/School/CPE416/code/lab4/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/neiman/Documents/School/CPE416/code/lab4/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -539,7 +539,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3"
+			"value" : "/Users/neiman/Documents/School/CPE416/code/lab4"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -1102,42 +1102,6 @@
 			"value" : "FALSE"
 		},
 		{
-			"name" : "Project_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3/cmake-build-debug"
-		},
-		{
-			"name" : "Project_IS_TOP_LEVEL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "ON"
-		},
-		{
-			"name" : "Project_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3"
-		},
-		{
 			"name" : "simple_example_BINARY_DIR",
 			"properties" : 
 			[
@@ -1147,7 +1111,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3/cmake-build-debug"
+			"value" : "/Users/neiman/Documents/School/CPE416/code/lab4/cmake-build-debug"
 		},
 		{
 			"name" : "simple_example_IS_TOP_LEVEL",
@@ -1171,7 +1135,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/neiman/Documents/School/CPE416/code/lab3"
+			"value" : "/Users/neiman/Documents/School/CPE416/code/lab4"
 		}
 	],
 	"kind" : "cache",

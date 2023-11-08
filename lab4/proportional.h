@@ -5,7 +5,6 @@
 #ifndef LOCAL_V2_PROPORTIONAL_H
 #define LOCAL_V2_PROPORTIONAL_H
 
-
 #include "../library/globals.h"
 #include <math.h>
 

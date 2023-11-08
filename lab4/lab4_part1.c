@@ -9,7 +9,6 @@
  *
  **/
 
-
 #include "../library/globals.h"
 #include <util/delay.h>
 #include <avr/io.h>
@@ -28,6 +27,8 @@
 #define TIMESTEP        10
 
 #define MAX_NUM_TOWERS  4
+#define DIST_THRESHOLD_LOW 38
+#define DIST_THRESHOLD_HIGH 100
 
 typedef struct
 {
@@ -58,6 +59,21 @@ ISR(PCINT0_vect) {
 ISR(PCINT1_vect) {
    right_encoder++;  //increment right encoder
 }
+float map(int16_t input, int16_t input_range_min, int16_t input_range_max, float output_range_min, float output_range_max) {
+    // Map: floor an input integer between two values and linearly interpolate it to the specified range
+    // example: map(input=10, input_range_min=0, input_range_max=20, output_range_min=0 float output_range_max=1)
+    //          |--->  0.5
+    uint16_t input_floor;
+    if (input < input_range_min) {
+        input_floor = input_range_min;
+    } else if (input > input_range_max){
+        input_floor = input_range_max;
+    } else {
+        input_floor = input;
+    }
+
+    return ((float) (input_floor - input_range_min) / (float) (input_range_max - input_range_min)) * (output_range_max - output_range_min) + output_range_min;
+}
 
 int8_t read_accel(uint8_t scale) {
     // return value on a scale of 0 to (scale)
@@ -77,13 +93,13 @@ int8_t read_accel(uint8_t scale) {
 }
 
 void sensor_test() {
+    u08 sensor_l, sensor_r;
     sensor_l = analog(PIN_SENSOR_L);
     sensor_r = analog(PIN_SENSOR_R);
     motor_command mc = compute_proportional(sensor_l, sensor_r);
     // motor(MOTOR_L, mc.left);
     // motor(MOTOR_R, mc.right);
     // right encoder test
-    // motor(MOTOR_R, 20);
     lcd_cursor(0,0);print_num(right_encoder);print_string("    ");
     lcd_cursor(0,1);print_num(read_accel(10));print_string("    ");
     lcd_cursor(4,0);print_num(analog(PIN_SENSOR_DIST));print_string("    ");
@@ -92,7 +108,6 @@ void sensor_test() {
 
 int main(void) {
 
-    u08 sensor_l, sensor_r;
     tower towers[MAX_NUM_TOWERS];
     // for (int i=0; i< MAX_NUM_TOWERS; i++){
     //     // reset all towers
@@ -104,18 +119,18 @@ int main(void) {
     // Tower 2 (vader) at 135º
     // Tower 3 at 180º
     // Tower 4 not enabled
-    tower[0].position = 15;
-    tower[0].active = 1;
-    tower[0].target = 0;
-    tower[1].position = 135;
-    tower[1].active = 1;
-    tower[1].target = 1;
-    tower[2].position = 180;
-    tower[2].active = 1;
-    tower[2].target = 1;
-    tower[3].position = 0;
-    tower[3].active = 0;
-    tower[3].target = 0;
+    towers[0].position = 15;
+    towers[0].active = 1;
+    towers[0].target = 0;
+    towers[1].position = 135;
+    towers[1].active = 1;
+    towers[1].target = 1;
+    towers[2].position = 180;
+    towers[2].active = 1;
+    towers[2].target = 1;
+    towers[3].position = 0;
+    towers[3].active = 0;
+    towers[3].target = 0;
     
 
 
@@ -126,9 +141,7 @@ int main(void) {
     clear_screen(); 
 
     while(1) {
-
-
-        
+        sensor_test();
     }
 
    return 0;
