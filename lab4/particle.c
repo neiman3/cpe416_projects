@@ -41,12 +41,61 @@ void init_particles(particle *data, uint8_t num_particles, tower *tower_position
 
 // Generate a set of new particles with most of them centered around the previous highly weighted particles
 void resample(particle *data, uint8_t num_particles) {
-    // TODO: Write function
-    sort_particles(data, num_particles);
+    sort_particles(data, 0,num_particles);
+    
 }
 
-void sort_particles(particle *data, uint8_t num_particles) {
-    
+// Quick sort implementation to sort particles by their weights
+void sort_particles(particle *data, uint8_t start, uint8_t end) {
+    uint8_t pivot;
+    if(num_particles <= 1 || start >= end)
+        return;
+    pivot = partition(data, start, end);
+    sort_particles(data, start, pivot-1);
+    sort_particles(data, pivot+1, end);
+}
+
+// helper for sort_particles()
+void partition(particle *data, uint8_t start, uint8_t end) {
+    uint8_t pivot_i = start;
+    float pivot_wt = data[end]->weight;
+    for(u08 i=start; i<end; i++) {
+        if(data[i] < pivot_wt) {
+            swap_particles(data[pivot_i], data[i]);
+            pivot_i++;
+        }
+    }
+}
+
+// Takes an array of sorted particles and a pointer to a single particle.
+// Inserts a duplicate particle after the target, overwriting the last particle.
+void duplicate_particle(particle *data, uint8_t num_particles, particle *target_position) {
+    // 
+    uint8_t found=0;
+    for (int i=0; i< num_particles; i++){
+        // iterate through the list until we find the specified particle
+        if (!found) {
+            if (&data+i == target_position) { // Do the pointers match?
+                found = 1;
+            }
+        } else {
+            
+        }
+    }
+}
+
+// swap the values of particles x and y
+void swap_particles(particle *x, particle *y) {
+    particle n;
+    n.position = x->position;
+    n.weight = x->weight;
+    n.expectation = x->expectation;
+    x->position = y->position;
+    x->weight = y->weight;
+    y->expectation = y->expectation;
+    y->position = n.position;
+    y->weight = n.weight;
+    y->expectation = n.expectation;
 }
 
 // Advance all particles based on known position movement of the robot. 
@@ -64,12 +113,11 @@ void motion_update(particle *data, uint8_t num_particles, uint16_t position_delt
     float pos=0;
     for (int i=0; i<num_particles; i++){
         // for each particle:
-        pos = data[i].position
+        pos = fixed_point_pos_to_float([i].position); // convert stored uint16 to float degrees
+        pos += (float) position_delta * 0.739766779; // add the robot position delta (converted to degrees) to particle position 
+        pos = add_noise(pos, 0.013909689); // Apply noise based on the motion model
+        data[i].position = float_to_fixed_point(wrap_degrees(pos)); // Wrap degrees (0-360) and convert back to uint16. Restore
     }
-
-
-
-
 }
 
 // Use Box-Mueller transform to add gaussian noise with a given mean and standard deviation
@@ -123,5 +171,11 @@ float calculate_sensor_probability(uint8_t sensor_reading, particle *data) {
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)
 float wrap_degrees(float data) {
-
+    while(data < 0) {
+        data += 360;
+    }
+    while(data > 360) {
+        data -= 360;
+    }
+    return data;
 }

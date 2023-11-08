@@ -40,6 +40,8 @@ typedef struct
 void init_particles(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers);
 void resample(particle *data, uint8_t num_particles);
 void motion_update(particle *data, uint8_t num_particles, uint16_t position_delta);
+void duplicate_particle(particle *data, uint8_t num_particles, particle *target_position);
+void sort_particles(particle *data, uint8_t start, uint8_t end);
 float map(int16_t input, int16_t input_range_min, int16_t input_range_max, float output_range_min, float output_range_max);
 float add_noise(float input_value, float stdev);
 float calculate_position_probability(float particle_position, tower *tower_positions, uint8_t number_of_towers);
