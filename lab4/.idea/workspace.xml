@@ -22,15 +22,8 @@
   <component name="ChangeListManager">
     <list default="true" id="2c5d9c87-975c-43ea-a847-6f2ce4e8f79f" name="Changes" comment="Testing and introduce mean and stev fuinctions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/lab4_part2.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/lab4_part2.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/particle.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/particle.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/lab4" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/lab4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab4_part2.c" beforeDir="false" afterPath="$PROJECT_DIR$/lab4_part2.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/particle.c" beforeDir="false" afterPath="$PROJECT_DIR$/particle.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/particle.h" beforeDir="false" afterPath="$PROJECT_DIR$/particle.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +98,7 @@
       <workItem from="1699562474370" duration="866000" />
       <workItem from="1699563381591" duration="2655000" />
       <workItem from="1699566150713" duration="41000" />
+      <workItem from="1699566217928" duration="1394000" />
     </task>
     <task id="LOCAL-00001" summary="Testing and introduce mean and stev fuinctions">
       <option name="closed" value="true" />
@@ -140,25 +134,10 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/lab4_part2.c</url>
-          <line>154</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lab4_part2.c</url>
           <line>138</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/particle.c</url>
-          <line>87</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="CMakeRunConfiguration">
-        <watch expression="particles[23]" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>

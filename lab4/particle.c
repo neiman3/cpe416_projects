@@ -44,7 +44,7 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Normalize particle weights before start
     normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
-    sort_particles(data, 0, num_particles-1, num_particles);
+    sort_particles(data, num_particles, 0, num_particles-1);
 
     // Insert particles proportional to their weight, replacing lowest particles
     uint8_t counter=0;
@@ -89,8 +89,8 @@ void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_
     if(num_particles <= 1 || start >= stop)
         return;
     pivot = partition(data, start, stop);
-    sort_particles(data, 0, start, pivot - 1);
-    sort_particles(data, 0, pivot + 1, stop);
+    sort_particles(data, num_particles, start, pivot - 1);
+    sort_particles(data, num_particles, pivot + 1, stop);
 }
 
 // helper for sort_particles()
@@ -98,7 +98,7 @@ uint8_t partition(particle *data, uint8_t start, uint8_t end) {
     uint8_t pivot_i = start;
     float pivot_wt = data[end].weight;
     for(u08 i=start; i<end; i++) {
-        if(data[i].weight < pivot_wt) {
+        if(data[i].weight > pivot_wt) {
             swap_particles(&data[pivot_i], &data[i]);
             pivot_i++;
         }
@@ -203,7 +203,7 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
     for (uint8_t i=0; i<num_particles; i++) {
         float expectation = calculate_position_probability(data[i].position, tower_positions, num_towers);
         // expectation is expected sensor probability
-        data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , 0.01);
+        data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
 }
 
