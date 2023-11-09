@@ -35,7 +35,6 @@ void init_particles(particle *data, uint8_t num_particles, tower *tower_position
         pos = map(i, 0, num_particles, 0, 360);
         data[i].position = float_to_fixed_point_pos(pos);
         data[i].weight = (float) 1.0 / (float) num_particles;
-        data[i].expectation = calculate_position_probability(pos, tower_positions, num_towers);
     }
 }
 
@@ -45,18 +44,26 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Normalize particle weights before start
     normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
-    sort_particles(data, 0, 0, num_particles);
+    sort_particles(data, 0, num_particles-1, num_particles);
 
     // Insert particles proportional to their weight, replacing lowest particles
     uint8_t counter=0;
-    uint8_t num_inserts;
-    while (counter < num_particles) {
-        num_inserts = (uint8_t) (data[counter].weight * num_particles); // number of times to insert the new particle (by weight)
-        for (int i = 0; i<num_inserts && counter<num_particles;i++) {
-            duplicate_particle(data, num_particles, &data[counter]);
-            counter++;
+    int16_t num_inserts;
+    // Particle points to start and end of list.
+    uint16_t read_index = 0;
+    uint16_t insertion_index = num_particles - 1;
+
+    // Calculate number of inserts minus itself
+    num_inserts = ((int16_t) (data[counter].weight * (float) num_particles)); // number of times to insert the new particle (by weight)
+    if (num_inserts > 0) { num_inserts -= 1; }
+    while (read_index < insertion_index) {
+        for (int16_t i = 0; i < num_inserts; i++) {
+            data[insertion_index] = data[read_index];
+            insertion_index--;
         }
+        read_index++;
     }
+
 
     // normalize
     normalize_particle_weights(data, num_particles);
@@ -64,13 +71,12 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Add 5% random particles
     uint8_t random_index;
     float random_position;
-    for (uint8_t i=0; i<(uint8_t) ((uint16_t) (NUM_PARTICLES * 5 / 100)); i++) {
+    for (uint8_t i=0; i<(uint8_t) ((uint16_t) (NUM_PARTICLES * NUM_RANDOM_INSERTS / 100)); i++) {
         // pick a random particle and seed it with uniform weight, random position
         random_index = (uint8_t) (NUM_PARTICLES * (float) (uint32_t) rand() / (float) RAND_MAX);
         random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
         data[random_index].weight = (float) 1.0 / (float) NUM_PARTICLES;
         data[random_index].position = float_to_fixed_point_pos(random_position);
-        data[random_index].expectation = calculate_position_probability(random_position, tower_positions, num_towers);
     }
 
     // normalize finally, again (since we inserted new particles and weights)
@@ -119,13 +125,10 @@ void swap_particles(particle *x, particle *y) {
     particle n;
     n.position = x->position;
     n.weight = x->weight;
-    n.expectation = x->expectation;
     x->position = y->position;
     x->weight = y->weight;
-    y->expectation = y->expectation;
     y->position = n.position;
     y->weight = n.weight;
-    y->expectation = n.expectation;
 }
 
 // Advance all particles based on known position movement of the robot. 
@@ -195,8 +198,13 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 }
 
 // Calculate the likelyhood of a tower given a sensor reading
-float calculate_sensor_probability(uint8_t sensor_reading, particle *data) {
-    return 0;
+void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
+    float p_tower = map(sensor_reading, DIST_THRESHOLD_LOW, DIST_THRESHOLD_HIGH, 0, 1); // probability of there being a tower currently at the sensor reading
+    for (uint8_t i=0; i<num_particles; i++) {
+        float expectation = calculate_position_probability(data[i].position, tower_positions, num_towers);
+        // expectation is expected sensor probability
+        data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , 0.01);
+    }
 }
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)

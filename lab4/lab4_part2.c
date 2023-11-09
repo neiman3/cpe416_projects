@@ -32,6 +32,7 @@
 #define DEAD_ZONE 20
 
 #define TIMESTEP        10
+#define UPDATE_INTV     100 // Time (ms) delay between simulation cycles
 
 
 volatile uint16_t left_encoder = 0;
@@ -94,7 +95,6 @@ void sensor_test() {
 
 
 int main(void) {
-
     tower towers[MAX_NUM_TOWERS];
     // for (int i=0; i< MAX_NUM_TOWERS; i++){
     //     // reset all towers
@@ -130,9 +130,32 @@ int main(void) {
     clear_screen();
 #endif
 
-//    while(1) {
-//
-//    }
+#ifdef LOCAL
+    // simulated
+    float simulated_position = 47;
+    uint16_t simulated_ticks = 0;
+    while(1) {
+        // advance robot position by 15  ticks (11º)
+        simulated_ticks += 1;
+        simulated_position += add_noise(simulated_ticks * 0.739, 1);
+        simulated_position = wrap_degrees(simulated_position);
+        motion_update(particles, NUM_PARTICLES, simulated_ticks);
+        simulated_ticks = 0; // reset counter to get next delt
+
+        // Take a simulated sensor reading
+        uint8_t sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) * calculate_position_probability(simulated_position, towers, 3) + DIST_THRESHOLD_LOW);
+        calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
+
+        resample(particles, NUM_PARTICLES, towers, 3);
+        printf("%3.2f\t", simulated_position);
+        for (int i=0; i<NUM_PARTICLES; i++) {
+            printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
+        }
+        printf("\n");
+
+        // _delay_ms(TIMESTEP);
+    }
+#endif
 
     return 0;
 }
