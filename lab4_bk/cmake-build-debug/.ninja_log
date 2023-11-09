@@ -1,0 +1,6 @@
+# ninja log v5
+1	33	1698463857673693052	CMakeFiles/simple_example.dir/proportional.c.o	2e5b549164567506
+1	34	1698463857674905423	CMakeFiles/simple_example.dir/neuralnet.c.o	a0ce9807ee8d0283
+2	40	1698447175318496998	CMakeFiles/simple_example.dir/progressbar.c.o	5f1c641aabee58fc
+292	342	1698519995634801660	simple_example	3c85d38d143cbd6a
+1	41	1699467956588067871	build.ninja	ea5db0faca1c517c

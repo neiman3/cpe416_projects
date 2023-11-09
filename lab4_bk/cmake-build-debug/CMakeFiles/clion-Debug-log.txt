@@ -1,0 +1,16 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/neiman/Documents/School/CPE416/code/lab4 -B /Users/neiman/Documents/School/CPE416/code/lab4/cmake-build-debug
+-- Configuring done (0.0s)
+CMake Error at CMakeLists.txt:11 (add_executable):
+  Cannot find source file:
+
+    ../../../../../../../lab4_part2.c
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .mpp .m .M .mm .ixx .cppm .h
+  .hh .h++ .hm .hpp .hxx .in .txx .f .F .for .f77 .f90 .f95 .f03 .hip .ispc
+
+
+CMake Error at CMakeLists.txt:11 (add_executable):
+  No SOURCES given to target: simple_example
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
