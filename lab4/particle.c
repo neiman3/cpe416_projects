@@ -27,7 +27,7 @@ uint16_t float_to_fixed_point_pos(float data) {
 // initialize particles randomly. only run once
 // make a random distribution of particles around a 360º circle
 void init_particles(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
-    float noise;
+    //float noise;
     float pos;
 
     for(int i=0; i<num_particles; i++) {
@@ -52,7 +52,7 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     uint8_t num_inserts;
     while (counter < num_particles) {
         num_inserts = (uint8_t) (data[counter].weight * num_particles); // number of times to insert the new particle (by weight)
-        for (int i = 0; i<num_inserts & counter<num_particles;i++) {
+        for (int i = 0; i<num_inserts && counter<num_particles;i++) {
             duplicate_particle(data, num_particles, &data[counter]);
             counter++;
         }
@@ -79,26 +79,25 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
 
 // Quick sort implementation to sort particles by their weights
 void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_t stop) {
-    // TODO: Write sort algorithm
-    // Uncommented temporary to allow compiling
-//    uint8_t pivot;
-//    if(num_particles <= 1 || start >= stop)
-//        return;
-//    pivot = partition(data, start, stop);
-//    sort_particles(data, 0, start, pivot - 1);
-//    sort_particles(data, 0, pivot + 1, stop);
+    uint8_t pivot;
+    if(num_particles <= 1 || start >= stop)
+        return;
+    pivot = partition(data, start, stop);
+    sort_particles(data, 0, start, pivot - 1);
+    sort_particles(data, 0, pivot + 1, stop);
 }
 
 // helper for sort_particles()
-void partition(particle *data, uint8_t start, uint8_t end) {
-//    uint8_t pivot_i = start;
-//    float pivot_wt = data[end]->weight;
-//    for(u08 i=start; i<end; i++) {
-//        if(data[i] < pivot_wt) {
-//            swap_particles(data[pivot_i], data[i]);
-//            pivot_i++;
-//        }
-//    }
+uint8_t partition(particle *data, uint8_t start, uint8_t end) {
+    uint8_t pivot_i = start;
+    float pivot_wt = data[end].weight;
+    for(u08 i=start; i<end; i++) {
+        if(data[i].weight < pivot_wt) {
+            swap_particles(&data[pivot_i], &data[i]);
+            pivot_i++;
+        }
+    }
+    return pivot_i - 1;
 }
 
 // Takes an array of sorted particles and a pointer to a single particle.
@@ -197,7 +196,7 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 
 // Calculate the likelyhood of a tower given a sensor reading
 float calculate_sensor_probability(uint8_t sensor_reading, particle *data) {
-
+    return 0;
 }
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)
@@ -225,8 +224,10 @@ void normalize_particle_weights(particle *data, uint8_t num_particles) {
 
 float mean(particle *data, uint8_t num_particles) {
     // TODO: Write
+    return 0;
 }
 
 float stdev(particle *data, uint8_t num_particles) {
     // TODO: Write
+    return 0;
 }
