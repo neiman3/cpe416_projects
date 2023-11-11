@@ -25,6 +25,7 @@
 #define NUM_PARTICLES 100
 #define WEIGHT_CONSTANT 1.0
 #define NUM_RANDOM_INSERTS 0
+#define LOCALIZED_THRESHOLD
 
 #define MN_CONV_FACTOR ((float) MAX_POSITION / 360.0)
 
@@ -58,8 +59,7 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
 float fixed_point_pos_to_float(uint16_t data);
 float trapezoidal_pdf(float theta_read, float theta_tower);
 float wrap_degrees(float data);
-float mean(particle *data, uint8_t num_particles);
-float stdev(particle *data, uint8_t num_particles);
+void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_dev);
 uint16_t float_to_fixed_point_pos(float data);
 
 #endif

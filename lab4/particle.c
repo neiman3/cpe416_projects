@@ -239,3 +239,33 @@ float stdev(particle *data, uint8_t num_particles) {
     // TODO: Write
     return 0;
 }
+
+void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_dev) {
+    // Have to use cartesian representation since directional mean requires it
+    float mean_result_real = 0;
+    float mean_result_cplx = 0;
+    float angle;
+    for (int i = 0; i < num_particles; i++) {
+        // x = 1exp(jθ)
+        // so real part cos(θ) and imag sin(θ)
+        angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180);
+        mean_result_real += cosf(angle) / (float) num_particles;
+        mean_result_cplx += sinf(angle) / (float) num_particles;
+    }
+    // calculate variance
+    float st_dev_result_real = 0;
+    float st_dev_result_cplx = 0;
+    for (int i = 0; i < num_particles; i++) {
+        // variance = ∑ (x-µ)^2 / N
+        angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180);
+        st_dev_result_real += powf((cosf(angle) - mean_result_real), 2) / (float) num_particles;
+        st_dev_result_cplx += powf((sinf(angle) - mean_result_cplx), 2) / (float) num_particles;
+    }
+    st_dev_result_real = sqrtf(st_dev_result_real);
+    st_dev_result_cplx = sqrtf(st_dev_result_cplx);
+
+    // Mean is the angle of the real to cplx
+    *mean = atanf(mean_result_cplx / mean_result_real) * (float) (180 / M_PI);
+    // Geometric sum
+    *st_dev = sqrtf(st_dev_result_real * st_dev_result_real + st_dev_result_cplx * st_dev_result_cplx);
+}

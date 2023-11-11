@@ -134,6 +134,8 @@ int main(void) {
     // simulated
     float simulated_position = 47;
     uint16_t simulated_ticks = 0;
+    float estimated_position;
+    float estimated_position_confidence;
     while(1) {
         // advance robot position by 15  ticks (11º)
         simulated_ticks += 1;
@@ -145,9 +147,9 @@ int main(void) {
         // Take a simulated sensor reading
         uint8_t sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) * calculate_position_probability(simulated_position, towers, 3) + DIST_THRESHOLD_LOW);
         calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
-
         resample(particles, NUM_PARTICLES, towers, 3);
-        printf("%3.2f\t", simulated_position);
+        mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
+        printf("Actual position: (%3.2f)\tEstimated position: (%3.2f [%3.4f])\t", simulated_position, estimated_position, estimated_position_confidence);
         for (int i=0; i<NUM_PARTICLES; i++) {
             printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
         }
