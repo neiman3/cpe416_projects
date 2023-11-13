@@ -9,4 +9,5 @@ add_executable(lab4 lab4_part2.c
         proportional.c
         proportional.h
         progressbar.c
-        progressbar.h)
+        progressbar.h
+        test_data.h)

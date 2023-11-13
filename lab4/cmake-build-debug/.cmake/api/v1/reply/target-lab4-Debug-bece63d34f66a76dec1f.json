@@ -97,7 +97,8 @@
 			[
 				2,
 				4,
-				6
+				6,
+				7
 			]
 		}
 	],
@@ -140,6 +141,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "progressbar.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "test_data.h",
 			"sourceGroupIndex" : 1
 		}
 	],
