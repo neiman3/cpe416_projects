@@ -101,7 +101,6 @@ uint8_t partition(particle *data, uint8_t start, uint8_t end) {
         if(data[i].weight > pivot_wt) {
             pivot_i++;
             swap_particles(&data[pivot_i], &data[i]);
-            pivot_i++;
         }
     }
     pivot_i++;
