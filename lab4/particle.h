@@ -48,7 +48,7 @@ void init_particles(particle *data, uint8_t num_particles, tower *tower_position
 void resample(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers);
 void motion_update(particle *data, uint8_t num_particles, uint16_t position_delta);
 void duplicate_particle(particle *data, uint8_t num_particles, particle *target_position);
-void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_t stop);
+void sort_particles(particle *data, uint8_t start, uint8_t stop);
 void normalize_particle_weights(particle *data, uint8_t num_particles);
 uint8_t partition(particle *data, uint8_t start, uint8_t end);
 void swap_particles(particle *x, particle *y);

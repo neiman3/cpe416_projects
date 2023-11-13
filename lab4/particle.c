@@ -44,7 +44,7 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Normalize particle weights before start
     normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
-    sort_particles(data, num_particles, 0, num_particles-1);
+    sort_particles(data, 0, num_particles-1);
 
     // Insert particles proportional to their weight, replacing lowest particles
     uint8_t counter=0;
@@ -84,26 +84,28 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
 }
 
 // Quick sort implementation to sort particles by their weights
-void sort_particles(particle *data, uint8_t num_particles, uint8_t start, uint8_t stop) {
+void sort_particles(particle *data, uint8_t start, uint8_t stop) {
     uint8_t pivot;
-    if(num_particles <= 1 || start >= stop)
+    if(start < 0 || start >= stop)
         return;
     pivot = partition(data, start, stop);
-    sort_particles(data, num_particles, start, pivot - 1);
-    sort_particles(data, num_particles, pivot + 1, stop);
+    sort_particles(data, start, pivot - 1);
+    sort_particles(data, pivot + 1, stop);
 }
 
 // helper for sort_particles()
 uint8_t partition(particle *data, uint8_t start, uint8_t end) {
-    uint8_t pivot_i = start;
+    uint8_t pivot_i = start-1;
     float pivot_wt = data[end].weight;
     for(u08 i=start; i<end; i++) {
         if(data[i].weight > pivot_wt) {
-            swap_particles(&data[pivot_i], &data[i]);
             pivot_i++;
+            swap_particles(&data[pivot_i], &data[i]);
         }
     }
-    return pivot_i - 1;
+    pivot_i++;
+    swap_particles(&data[pivot_i], &data[end]);
+    return pivot_i;
 }
 
 // Takes an array of sorted particles and a pointer to a single particle.
