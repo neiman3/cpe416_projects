@@ -51,15 +51,18 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     int16_t num_inserts;
     // Particle points to start and end of list.
     uint16_t read_index = 0;
-    uint16_t insertion_index = num_particles - 1;
+    int16_t insertion_index = ((int16_t) num_particles);
+    insertion_index--;
 
     // Calculate number of inserts minus itself
     num_inserts = ((int16_t) (data[counter].weight * (float) num_particles)); // number of times to insert the new particle (by weight)
     if (num_inserts > 0) { num_inserts -= 1; }
+    if (num_inserts > num_particles) {num_particles = num_particles;}
     while (read_index < insertion_index) {
         for (int16_t i = 0; i < num_inserts; i++) {
             data[insertion_index] = data[read_index];
             insertion_index--;
+            if (insertion_index < 0) { break;}
         }
         read_index++;
     }

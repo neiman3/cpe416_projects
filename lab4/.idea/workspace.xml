@@ -20,9 +20,17 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2c5d9c87-975c-43ea-a847-6f2ce4e8f79f" name="Changes" comment="Testing and introduce mean and stev fuinctions">
+    <list default="true" id="2c5d9c87-975c-43ea-a847-6f2ce4e8f79f" name="Changes" comment="Implement bubble sort">
+      <change afterPath="$PROJECT_DIR$/data_visualization/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/lab4_part2.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/lab4_part2.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/particle.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/lab4.dir/particle.c.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/lab4" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/lab4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab4_part2.c" beforeDir="false" afterPath="$PROJECT_DIR$/lab4_part2.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/particle.c" beforeDir="false" afterPath="$PROJECT_DIR$/particle.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/particle.h" beforeDir="false" afterPath="$PROJECT_DIR$/particle.h" afterDir="false" />
     </list>
@@ -72,10 +80,12 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/neiman/Documents/School/CPE416/code/lab4&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -101,7 +111,8 @@
       <workItem from="1699566150713" duration="41000" />
       <workItem from="1699566217928" duration="1394000" />
       <workItem from="1699737766985" duration="2023000" />
-      <workItem from="1699892594922" duration="341000" />
+      <workItem from="1699892594922" duration="2171000" />
+      <workItem from="1699894866733" duration="47000" />
     </task>
     <task id="LOCAL-00001" summary="Testing and introduce mean and stev fuinctions">
       <option name="closed" value="true" />
@@ -119,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699739464622</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Implement bubble sort">
+      <option name="closed" value="true" />
+      <created>1699892951231</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1699892951232</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,22 +152,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Testing and introduce mean and stev fuinctions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing and introduce mean and stev fuinctions" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lab4_part2.c</url>
-          <line>122</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lab4_part2.c</url>
-          <line>140</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Implement bubble sort" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement bubble sort" />
   </component>
 </project>

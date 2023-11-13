@@ -132,24 +132,30 @@ int main(void) {
 
 #ifdef LOCAL
     // simulated
-    float simulated_position = 47;
+    float simulated_position = 345;
     uint16_t simulated_ticks = 0;
     float estimated_position;
     float estimated_position_confidence;
-    while(1) {
+    uint8_t sensor_reading;
+    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
+    for (int i=0;i<NUM_PARTICLES;i++) {
+        printf("Particle %d location\tParticle %d weight\t", i,i);
+    }printf("\n");
+
+    for(int i=0; i<300;i++) {
         // advance robot position by 15  ticks (11º)
-        simulated_ticks += 1;
-        simulated_position += add_noise(simulated_ticks * 0.739, 1);
+        simulated_ticks += 2;
+        simulated_position += add_noise(simulated_ticks * 0.739, 0.1);
         simulated_position = wrap_degrees(simulated_position);
         motion_update(particles, NUM_PARTICLES, simulated_ticks);
         simulated_ticks = 0; // reset counter to get next delt
 
         // Take a simulated sensor reading
-        uint8_t sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) * calculate_position_probability(simulated_position, towers, 3) + DIST_THRESHOLD_LOW);
+        sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) * calculate_position_probability(simulated_position, towers, 3) / 0.1 + DIST_THRESHOLD_LOW);
         calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
         resample(particles, NUM_PARTICLES, towers, 3);
         mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
-        printf("Actual position: (%3.2f)\tEstimated position: (%3.2f [%3.4f])\t", simulated_position, estimated_position, estimated_position_confidence);
+        printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
         for (int i=0; i<NUM_PARTICLES; i++) {
             printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
         }
