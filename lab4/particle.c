@@ -44,8 +44,9 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Normalize particle weights before start
     normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
-    sort_particles(data, num_particles, 0, num_particles-1);
-
+//    sort_particles(data, num_particles, 0, num_particles-1);
+    // Temp: use bubble sort to sort
+    bubble_sort(data, num_particles);
     // Insert particles proportional to their weight, replacing lowest particles
     uint8_t counter=0;
     int16_t num_inserts;
@@ -104,6 +105,21 @@ uint8_t partition(particle *data, uint8_t start, uint8_t end) {
         }
     }
     return pivot_i - 1;
+}
+
+void bubble_sort(particle *data, uint8_t num_particles) {
+    uint8_t index = 0;
+    particle t;
+    while ((index-1) < num_particles) {
+        if (data[index].weight >= data[index+1].weight) {
+            // in order, continue
+            index++;
+        } else {
+            // swap
+            swap_particles(&data[index], &data[index+1]);
+            index = 0;
+        }
+    }
 }
 
 // Takes an array of sorted particles and a pointer to a single particle.

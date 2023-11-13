@@ -61,5 +61,6 @@ float trapezoidal_pdf(float theta_read, float theta_tower);
 float wrap_degrees(float data);
 void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_dev);
 uint16_t float_to_fixed_point_pos(float data);
+void bubble_sort(particle *data, uint8_t num_particles);
 
 #endif
