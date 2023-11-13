@@ -22,15 +22,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2c5d9c87-975c-43ea-a847-6f2ce4e8f79f" name="Changes" comment="Testing and introduce mean and stev fuinctions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/lab4" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/lab4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab4_part2.c" beforeDir="false" afterPath="$PROJECT_DIR$/lab4_part2.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/particle.c" beforeDir="false" afterPath="$PROJECT_DIR$/particle.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/particle.h" beforeDir="false" afterPath="$PROJECT_DIR$/particle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../other/lab4_motion_model_data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/../other/lab4_motion_model_data.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../other/~$lab4_motion_model_data.xlsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +100,8 @@
       <workItem from="1699563381591" duration="2655000" />
       <workItem from="1699566150713" duration="41000" />
       <workItem from="1699566217928" duration="1394000" />
-      <workItem from="1699737766985" duration="1677000" />
+      <workItem from="1699737766985" duration="2023000" />
+      <workItem from="1699892594922" duration="341000" />
     </task>
     <task id="LOCAL-00001" summary="Testing and introduce mean and stev fuinctions">
       <option name="closed" value="true" />
@@ -116,7 +111,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699472326321</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Testing and introduce mean and stev fuinctions">
+      <option name="closed" value="true" />
+      <created>1699739464622</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1699739464622</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
