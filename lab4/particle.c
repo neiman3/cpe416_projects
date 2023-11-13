@@ -44,7 +44,8 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     // Normalize particle weights before start
     normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
-    sort_particles(data, 0, num_particles-1);
+//    sort_particles(data, 0, num_particles-1);
+    bubble_sort(data, num_particles);
 
     // Insert particles proportional to their weight, replacing lowest particles
     uint8_t counter=0;
@@ -104,7 +105,6 @@ uint8_t partition(particle *data, uint8_t start, uint8_t end) {
         if(data[i].weight > pivot_wt) {
             pivot_i++;
             swap_particles(&data[pivot_i], &data[i]);
-            pivot_i++;
         }
     }
     pivot_i++;
@@ -206,8 +206,9 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 // Calculate the likelyhood of a tower given a sensor reading
 void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
     float p_tower = map(sensor_reading, DIST_THRESHOLD_LOW, DIST_THRESHOLD_HIGH, 0, 1); // probability of there being a tower currently at the sensor reading
+    float expectation;
     for (uint8_t i=0; i<num_particles; i++) {
-        float expectation = calculate_position_probability(data[i].position, tower_positions, num_towers);
+        expectation = calculate_position_probability(data[i].position, tower_positions, num_towers);
         // expectation is expected sensor probability
         data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
@@ -254,7 +255,7 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
     for (int i = 0; i < num_particles; i++) {
         // x = 1exp(jθ)
         // so real part cos(θ) and imag sin(θ)
-        angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180);
+        angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180.0);
         mean_result_real += cosf(angle) / (float) num_particles;
         mean_result_cplx += sinf(angle) / (float) num_particles;
     }
@@ -272,6 +273,25 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
 
     // Mean is the angle of the real to cplx
     *mean = atanf(mean_result_cplx / mean_result_real) * (float) (180 / M_PI);
+    // real part negative-trig function returns different quadrant
+    if (mean_result_real < 0) {*mean += 180;}
+    *mean = wrap_degrees(*mean);
     // Geometric sum
     *st_dev = sqrtf(st_dev_result_real * st_dev_result_real + st_dev_result_cplx * st_dev_result_cplx);
+}
+
+
+void bubble_sort(particle *data, uint8_t num_particles) {
+    uint8_t index = 0;
+    particle t;
+    while ((index-1) < num_particles) {
+        if (data[index].weight >= data[index+1].weight) {
+            // in order, continue
+            index++;
+        } else {
+            // swap
+            swap_particles(&data[index], &data[index+1]);
+            index = 0;
+        }
+    }
 }

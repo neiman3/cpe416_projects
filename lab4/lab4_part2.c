@@ -21,6 +21,7 @@
 #endif
 #ifdef LOCAL
 #include <stdio.h>
+#include "test_data.h"
 #endif
 
 #define PIN_SENSOR_L    3
@@ -95,12 +96,14 @@ void sensor_test() {
 
 
 int main(void) {
+    // test mean and stdev
+    float m;
+    float std;
+    mean_st_dev(test_data, 10, &m, &std);
+    printf("Mean: %0.3f, Std: %0.3f", m, std);
+    return 0;
+
     tower towers[MAX_NUM_TOWERS];
-    // for (int i=0; i< MAX_NUM_TOWERS; i++){
-    //     // reset all towers
-    // }
-
-
     // hard code input data for now
     // Tower 1 at 15º
     // Tower 2 (vader) at 135º
