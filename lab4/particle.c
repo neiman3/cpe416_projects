@@ -42,7 +42,7 @@ void init_particles(particle *data, uint8_t num_particles, tower *tower_position
 void resample(particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
     // TODO: Test
     // Normalize particle weights before start
-    normalize_particle_weights(data, num_particles);
+//    normalize_particle_weights(data, num_particles);
     // Sort particles from high to low by weight
 //    sort_particles(data, 0, num_particles-1);
     bubble_sort(data, num_particles);

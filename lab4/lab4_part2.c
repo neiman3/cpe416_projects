@@ -141,12 +141,13 @@ int main(void) {
     float estimated_position_confidence;
     uint8_t sensor_reading;
 //    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
-//    for (int i=0;i<NUM_PARTICLES;i++) {
-//        printf("Particle %d location\tParticle %d weight\t", i,i);
-//    }printf("\n");
-    for (int b=0; b<360; b+=10) {
+    for (int i=0;i<NUM_PARTICLES;i++) {
+        printf("Particle %d location\tParticle %d weight\t", i,i);
+    }printf("\n");
+//    for (int b=0; b<360; b+=10) {
         init_particles(particles, NUM_PARTICLES, towers, 3);
-        simulated_position = (float) b;
+//        simulated_position = (float) b;
+        simulated_position = 340;
         uint16_t i;
         for (i = 0; i < 1000; i++) {
             // advance robot position by 15  ticks (11º)
@@ -170,16 +171,16 @@ int main(void) {
             }
 
             // Weights dump
-            //        printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
-            //        for (int i=0; i<NUM_PARTICLES; i++) {
-            //            printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
-            //        }
-            //        printf("\n");
+                    printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
+                    for (int i=0; i<NUM_PARTICLES; i++) {
+                        printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
+                    }
+                    printf("\n");
 
             // _delay_ms(TIMESTEP);
         }
-        printf("%3.1f, %3.1f, %3.1f, %0.3f, %d\n", (float) b, simulated_position, estimated_position, estimated_position_confidence, i);
-    }
+//        printf("%3.1f, %3.1f, %3.1f, %0.3f, %d\n", (float) b, simulated_position, estimated_position, estimated_position_confidence, i);
+//    }
 #endif
 
     return 0;
