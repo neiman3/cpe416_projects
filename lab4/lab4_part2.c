@@ -135,12 +135,12 @@ int main(void) {
 
 #ifdef LOCAL
     // simulated
-    float simulated_position = 0;
+    float simulated_position = 38;
     uint16_t simulated_ticks = 0;
     float estimated_position;
     float estimated_position_confidence;
     uint8_t sensor_reading;
-//    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
+    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
     for (int i=0;i<NUM_PARTICLES;i++) {
         printf("Particle %d location\tParticle %d weight\t", i,i);
     }printf("\n");
@@ -148,10 +148,10 @@ int main(void) {
         init_particles(particles, NUM_PARTICLES, towers, 3);
 //        simulated_position = (float) b;
         simulated_position = 340;
-        uint16_t i;
-        for (i = 0; i < 1000; i++) {
+        uint16_t i=0;
+        for (i = 0; i < 200; i++) {
             // advance robot position by 15  ticks (11º)
-            simulated_ticks += 2;
+            simulated_ticks += 10;
             simulated_position += add_noise(simulated_ticks * 0.739, 0.1);
             simulated_position = wrap_degrees(simulated_position);
             motion_update(particles, NUM_PARTICLES, simulated_ticks);
