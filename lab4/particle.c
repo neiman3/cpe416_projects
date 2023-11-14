@@ -209,10 +209,14 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
     float p_tower = map(sensor_reading, DIST_THRESHOLD_LOW, DIST_THRESHOLD_HIGH, 0, 1); // probability of there being a tower currently at the sensor reading
     float expectation;
+    float error = 0;
     for (uint8_t i=0; i<num_particles; i++) {
         expectation = calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers);
         // expectation is expected sensor probability
-        data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
+        // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
+        error = expectation - p_tower;
+        data[i].weight = 1 - ((expectation<0)?-expectation:expectation);
+        // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
 }
 
