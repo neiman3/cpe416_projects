@@ -96,12 +96,6 @@ void sensor_test() {
 
 
 int main(void) {
-    // test mean and stdev
-//    float m;
-//    float std;
-//    mean_st_dev(test_data, 10, &m, &std);
-//    printf("Mean: %0.3f, Std: %0.3f", m, std);
-//    return 0;
 
     tower towers[MAX_NUM_TOWERS];
     // hard code input data for now
@@ -165,10 +159,10 @@ int main(void) {
             resample(particles, NUM_PARTICLES, towers, 3);
             mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
 
-            if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
-                // localized
-                break;
-            }
+            // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
+            //     // localized
+            //     break;
+            // }
 
             // Weights dump
                     printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
