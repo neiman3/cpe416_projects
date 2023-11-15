@@ -10,7 +10,7 @@
  * TESTING ON ROBOT
  *
  **/
-#define LOCAL
+// #define LOCAL
 
 #include "../library/globals.h"
 #include <math.h>
