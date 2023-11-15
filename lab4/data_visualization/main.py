@@ -17,7 +17,8 @@ writer = FFMpegWriter(fps=24, metadata=metadata)
 fig = plt.figure()
 skip_frames = 0
 
-towers = [15, 135, 180]
+# towers = [15, 135, 180]
+towers = [15]
 
 iter = []
 stdev = []
