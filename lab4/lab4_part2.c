@@ -8,7 +8,7 @@
  *         ( wrapper for Lab2 in a single function )
  *
  **/
-// #define LOCAL
+ #define LOCAL
 
 #include "../library/globals.h"
 #include <math.h>
