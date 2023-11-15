@@ -137,43 +137,55 @@ int main(void) {
     init_encoder();
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
-    clear_screen();
+    clear_screen(); lcd_cursor(0,0);
 
     float estimated_position = 0;
     float estimated_position_stdev = 0;
     uint8_t sensor_reading = 1;
+    uint8_t position_delta;
     while(1) {
+        clear_screen(); // Testing the culprit of the freeze
 
         // self-driving line following
         u08 sensor_l, sensor_r;
         sensor_l = analog(PIN_SENSOR_L);
         sensor_r = analog(PIN_SENSOR_R);
         sensor_reading = analog(PIN_SENSOR_DIST);
+        print_string("_");
         motor_command mc = compute_proportional(sensor_l, sensor_r);
+        print_string("M");
         // motor(MOTOR_L, mc.left);
         // motor(MOTOR_R, mc.right);
 
         if (right_encoder >= TICKS_UPDATE) {
             // time to update the particles
-            motion_update(particles, NUM_PARTICLES, right_encoder);
-            right_encoder = 0; // reset counter to get next delt
+            // before the right encoder gets incremented, save it first
+            position_delta = right_encoder;
+            right_encoder = 0; // reset to get next delta.
+            motion_update(particles, NUM_PARTICLES, position_delta);
+            print_string("A");
 
             // Take a sensor reading
             calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
+            print_string("B");
             resample(particles, NUM_PARTICLES, towers, num_towers);
+            print_string("C");
             mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_stdev);
+            print_string("D");
 
             // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
             //     // localized
             //     break;
             // }
+            for (int i=0;i<200;i++) {
+                _delay_ms(10); }
         }
-
             // data dump
-        lcd_cursor(0,0);print_string("p"); print_num((uint16_t) estimated_position);print_string("   ");
-        lcd_cursor(4,0);print_string("s"); print_num(sensor_reading);print_string("   ");
-        lcd_cursor(0,1);print_string("c0."); print_num((uint16_t) (estimated_position_stdev * 1000));print_string("   ");
-        lcd_cursor(4,1);print_string("w"); print_num(right_encoder);print_string("   ");
+        print_string("Z");
+        // lcd_cursor(0,0);print_string("p"); print_num((uint16_t) estimated_position);print_string("   ");
+        // lcd_cursor(4,0);print_string("s"); print_num(sensor_reading);print_string("   ");
+        // lcd_cursor(0,1);print_string("c0."); print_num((uint16_t) (estimated_position_stdev * 1000));print_string("   ");
+        // lcd_cursor(4,1);print_string("w"); print_num(right_encoder);print_string("   ");
         _delay_ms(TIMESTEP);
     }
 

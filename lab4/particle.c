@@ -154,11 +154,20 @@ void motion_update(particle *data, uint8_t num_particles, uint16_t position_delt
     float pos=0;
     for (int i=0; i<num_particles; i++){
         // for each particle:
+        lcd_cursor(0,1);
+        print_string("        ");
+        lcd_cursor(0,1);print_num(i);
         pos = fixed_point_pos_to_float(data[i].position); // convert stored uint16 to float degrees
+        print_string("A");
         pos += (float) position_delta * (float) 0.7397667; // add the robot position delta (converted to degrees) to particle position
+        print_string("B");
         pos = add_noise(pos, (float) 0.013909689); // Apply noise based on the motion model
+        print_string("C");
         data[i].position = float_to_fixed_point_pos(wrap_degrees(pos)); // Wrap degrees (0-360) and convert back to uint16. Restore
+        print_string("D");
     }
+    print_string("Z");
+    lcd_cursor(2,0);
 }
 
 // Use Box-Mueller transform to add gaussian noise with a given mean and standard deviation
