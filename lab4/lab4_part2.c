@@ -8,7 +8,7 @@
  *         ( wrapper for Lab2 in a single function )
  *
  **/
-#define LOCAL
+// #define LOCAL
 
 #include "../library/globals.h"
 #include <math.h>
@@ -31,6 +31,8 @@
 #define MOTOR_R         1
 #define ACCEL_CENTER 127
 #define DEAD_ZONE 20
+
+#define TICKS_UPDATE 10
 
 #define TIMESTEP        10
 #define UPDATE_INTV     100 // Time (ms) delay between simulation cycles
@@ -89,7 +91,6 @@ void sensor_test() {
     lcd_cursor(0,0);print_num(right_encoder);print_string("    ");
     lcd_cursor(0,1);print_num(read_accel(10));print_string("    ");
     lcd_cursor(4,0);print_num(analog(PIN_SENSOR_DIST));print_string("    ");
-    _delay_ms(TIMESTEP);
 }
 
 #endif
@@ -97,12 +98,31 @@ void sensor_test() {
 
 int main(void) {
 
+
+    uint8_t num_towers = 1;
     tower towers[MAX_NUM_TOWERS];
     // hard code input data for now
     // Tower 1 at 15º
     // Tower 2 (vader) at 135º
     // Tower 3 at 180º
     // Tower 4 not enabled
+    
+    // TODO: input # towers
+    //clear_screen();
+    //int i;
+    //for(i=0; i<num_towers; i++) {
+    //    lcd_cursor(0,0);
+    //    print_string("Tower #");
+    //    print_num(i);
+    //    while()
+    //    towers[i].active = 1;
+    //}
+    // set remaining towers to inactive
+    //while(i<MAX_NUM_TOWERS) {
+        //towers[i].active = 0;
+        //i++;
+    //}
+
     towers[0].position = float_to_fixed_point_pos(15);
     towers[0].active = 1;
     towers[0].target = 0;
@@ -111,7 +131,7 @@ int main(void) {
     towers[1].target = 1;
     towers[2].position = float_to_fixed_point_pos(180);
     towers[2].active = 1;
-    towers[2].target = 1;
+    towers[2].target = 0;
     towers[3].position = 0;
     towers[3].active = 0;
     towers[3].target = 0;
@@ -125,57 +145,94 @@ int main(void) {
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
     clear_screen();
-#endif
 
-#ifdef LOCAL
-    // simulated
-    float simulated_position = 38;
-    uint16_t simulated_ticks = 0;
-    float estimated_position;
-    float estimated_position_confidence;
-    uint8_t sensor_reading;
-    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
-    for (int i=0;i<NUM_PARTICLES;i++) {
-        printf("Particle %d location\tParticle %d weight\t", i,i);
-    }printf("\n");
-//    for (int b=0; b<360; b+=10) {
-        init_particles(particles, NUM_PARTICLES, towers, 3);
-//        simulated_position = (float) b;
-        simulated_position = 340;
-        uint16_t i=0;
-        for (i = 0; i < 200; i++) {
-            // advance robot position by 15  ticks (11º)
-            simulated_ticks += 10;
-            simulated_position += add_noise(simulated_ticks * 0.739, 0.1);
-            simulated_position = wrap_degrees(simulated_position);
-            motion_update(particles, NUM_PARTICLES, simulated_ticks);
-            simulated_ticks = 0; // reset counter to get next delt
+    float estimated_position = 0;
+    float estimated_position_stdev = 0;
+    uint8_t sensor_reading = 1;
+    while(1) {
+        // self-driving line following
+        u08 sensor_l, sensor_r;
+        sensor_l = analog(PIN_SENSOR_L);
+        sensor_r = analog(PIN_SENSOR_R);
+        sensor_reading = analog(PIN_SENSOR_DIST);
+        motor_command mc = compute_proportional(sensor_l, sensor_r);
+        // motor(MOTOR_L, mc.left);
+        // motor(MOTOR_R, mc.right);
+        if (right_encoder >= TICKS_UPDATE) {
+            // time to update the particles
+            motion_update(particles, NUM_PARTICLES, right_encoder);
+            right_encoder = 0; // reset counter to get next delt
 
-            // Take a simulated sensor reading
-            sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) *
-                                        calculate_position_probability(simulated_position, towers, 3) / 0.1 +
-                                        DIST_THRESHOLD_LOW);
-            calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
-            resample(particles, NUM_PARTICLES, towers, 3);
-            mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
+            // Take a sensor reading
+            calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
+            resample(particles, NUM_PARTICLES, towers, num_towers);
+            mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_stdev);
 
             // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
             //     // localized
             //     break;
             // }
-
-            // Weights dump
-                    printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
-                    for (int i=0; i<NUM_PARTICLES; i++) {
-                        printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
-                    }
-                    printf("\n");
-
-            // _delay_ms(TIMESTEP);
         }
-//        printf("%3.1f, %3.1f, %3.1f, %0.3f, %d\n", (float) b, simulated_position, estimated_position, estimated_position_confidence, i);
-//    }
+
+            // data dump
+        lcd_cursor(0,0);print_string("p"); print_num((uint16_t) estimated_position);print_string("   ");
+        lcd_cursor(4,0);print_string("s"); print_num(sensor_reading);print_string("   ");
+        lcd_cursor(0,1);print_string("c0."); print_num((uint16_t) (estimated_position_stdev * 1000));print_string("   ");
+        lcd_cursor(4,1);print_string("w"); print_num(right_encoder);print_string("   ");
+        _delay_ms(TIMESTEP);
+    }
+
 #endif
+
+// #ifdef LOCAL
+//     // simulated
+//     float simulated_position = 0;
+//     uint16_t simulated_ticks = 0;
+//     float estimated_position;
+//     float estimated_position_confidence;
+//     uint8_t sensor_reading;
+//     printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
+//     for (int i=0;i<NUM_PARTICLES;i++) {
+//         printf("Particle %d location\tParticle %d weight\t", i,i);
+//     }printf("\n");
+// //    for (int b=0; b<360; b+=10) {
+// //        init_particles(particles, NUM_PARTICLES, towers, 3);
+// //        simulated_position = (float) b;
+//         simulated_position = 340;
+//         uint16_t i;
+//         for (i = 0; i < 200; i++) {
+//             // advance robot position by 15  ticks (11º)
+//             simulated_ticks += 10;
+//             simulated_position += add_noise(simulated_ticks * 0.739, 0.1);
+//             simulated_position = wrap_degrees(simulated_position);
+//             motion_update(particles, NUM_PARTICLES, simulated_ticks);
+//             simulated_ticks = 0; // reset counter to get next delt
+
+//             // Take a simulated sensor reading
+//             sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) *
+//                                         calculate_position_probability(simulated_position, towers, 3) / 0.1 +
+//                                         DIST_THRESHOLD_LOW);
+//             calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
+//             resample(particles, NUM_PARTICLES, towers, 3);
+//             mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
+
+//             // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
+//             //     // localized
+//             //     break;
+//             // }
+
+//             // Weights dump
+//                     printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
+//                     for (int i=0; i<NUM_PARTICLES; i++) {
+//                         printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
+//                     }
+//                     printf("\n");
+
+//             // _delay_ms(TIMESTEP);
+//         }
+// //        printf("%3.1f, %3.1f, %3.1f, %0.3f, %d\n", (float) b, simulated_position, estimated_position, estimated_position_confidence, i);
+// //    }
+// #endif
 
     return 0;
 }

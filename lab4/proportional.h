@@ -1,7 +1,7 @@
 //
 // Header file for proportional.c
 //
-#define LOCAL
+// #define LOCAL
 
 #ifndef LOCAL_V2_PROPORTIONAL_H
 #define LOCAL_V2_PROPORTIONAL_H
