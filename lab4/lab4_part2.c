@@ -99,7 +99,7 @@ void sensor_test() {
 int main(void) {
 
 
-    uint8_t num_towers = 3;
+    uint8_t num_towers;
     tower towers[MAX_NUM_TOWERS];
     uint8_t angle;
     uint8_t targ = 0;
@@ -109,7 +109,31 @@ int main(void) {
     // Tower 3 at 180º
     // Tower 4 not enabled
     
-    // TODO: input # towers
+    // Input # towers:
+        // lcd_cursor(0,0);
+        // print_string("Num towers:");
+        // while(!get_btn()) {
+        //     accel_read = 128 - get_accel_y();
+        //     if (accel_read < (ACCEL_CENTER - DEAD_ZONE)) {
+        //         // its pointing in negative direction
+        //         dir_x = -1 + 0*(accel_read - (ACCEL_CENTER - DEAD_ZONE));
+        //     } else if (accel_read > (ACCEL_CENTER + DEAD_ZONE)) {
+        //         // pointing in positive
+        //         dir_x = 1 + 0*(accel_read > (ACCEL_CENTER + DEAD_ZONE));
+        //     } else {
+        //         // it's in the dead zone
+        //         dir_x = 0;
+        //     }
+        //     num_towers += dir_x;
+        //     num_towers = min(max(0, num_towers), MAX_NUM_TOWERS);
+        //     lcd_cursor(0,1);
+        //     print_num(num_towers);
+        //     print_string("  ");
+        //     _delay_ms(20*TIMESTEP);
+        // }
+    //_delay_ms(20*TIMESTEP);
+
+    // Input tower pos and select target tower:  
     //int i;
     //for(i=0; i<num_towers; i++) {
     //    clear_screen();
@@ -121,9 +145,8 @@ int main(void) {
     //    while(!get_btn()) {
     //      angle = 0;
     //      print_num(angle);
-    //      _delay_ms(TIMESTEP);
+    //      _delay_ms(10*TIMESTEP);
     //    }
-    //    _delay_ms(TIMESTEP);
     //    if(!targ) {   // ask for target tower, if it hasn't been set yet
         //    clear_screen();
         //    lcd_cursor(0,0);
@@ -139,13 +162,13 @@ int main(void) {
         //                targ = 1;
         //            }
         //      print_num(targ);
-        //      _delay_ms(TIMESTEP);
+        //      _delay_ms(10*TIMESTEP);
         //    }
 //        }
     //    towers[i].position = angle;
     //    towers[i].active = 1;
     //    towers[i].target = targ;
-    //    _delay_ms(TIMESTEP);
+    //    _delay_ms(10*TIMESTEP);
     //}
     // set remaining towers to inactive
     //while(i<MAX_NUM_TOWERS) {
