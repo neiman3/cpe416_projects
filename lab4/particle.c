@@ -211,11 +211,11 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
     float expectation;
     float error = 0;
     for (uint8_t i=0; i<num_particles; i++) {
-        expectation = calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers);
+        expectation = (float) calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers) * 10;
         // expectation is expected sensor probability
         // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
         error = expectation - p_tower;
-        data[i].weight = 1 - ((error<0)?-error:error);
+        data[i].weight += 1 - ((error<0)?-error:error);
         // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
     normalize_particle_weights(data, num_particles);
@@ -293,16 +293,12 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
 
 
 void bubble_sort(particle *data, uint8_t num_particles) {
-    uint8_t index = 0;
-    // particle t;
-    while ((index-1) < num_particles) {
-        if (data[index].weight >= data[index+1].weight) {
-            // in order, continue
-            index++;
-        } else {
-            // swap
-            swap_particles(&data[index], &data[index+1]);
-            index = 0;
+    uint8_t i, j;
+    for (i=0; i<num_particles-1;i++){
+        for (j=0; j<(num_particles - i - 1); j++) {
+            if (data[j].weight < data[j + 1].weight) {
+                swap_particles(&data[j], &data[j + 1]);
+            }
         }
     }
 }
