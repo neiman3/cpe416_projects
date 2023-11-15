@@ -99,8 +99,10 @@ void sensor_test() {
 int main(void) {
 
 
-    uint8_t num_towers = 1;
+    uint8_t num_towers = 3;
     tower towers[MAX_NUM_TOWERS];
+    uint8_t angle;
+    uint8_t targ = 0;
     // hard code input data for now
     // Tower 1 at 15º
     // Tower 2 (vader) at 135º
@@ -108,14 +110,42 @@ int main(void) {
     // Tower 4 not enabled
     
     // TODO: input # towers
-    //clear_screen();
     //int i;
     //for(i=0; i<num_towers; i++) {
+    //    clear_screen();
     //    lcd_cursor(0,0);
     //    print_string("Tower #");
     //    print_num(i);
-    //    while()
+    //    lcd_cursor(0,1);
+    //    print_string("Pos: ");
+    //    while(!get_btn()) {
+    //      angle = 0;
+    //      print_num(angle);
+    //      _delay_ms(TIMESTEP);
+    //    }
+    //    _delay_ms(TIMESTEP);
+    //    if(!targ) {   // ask for target tower, if it hasn't been set yet
+        //    clear_screen();
+        //    lcd_cursor(0,0);
+        //    print_string("Target? ");
+        //    lcd_cursor(0,1);
+        //    while(!get_btn()) {
+        //            accel_read = 128 - get_accel_y();
+        //            if (accel_read <= ACCEL_CENTER) {
+                        // its pointing in 'no' direction
+        //                targ = 0;
+        //            } else {
+                        // its pointing in 'yes' direction
+        //                targ = 1;
+        //            }
+        //      print_num(targ);
+        //      _delay_ms(TIMESTEP);
+        //    }
+//        }
+    //    towers[i].position = angle;
     //    towers[i].active = 1;
+    //    towers[i].target = targ;
+    //    _delay_ms(TIMESTEP);
     //}
     // set remaining towers to inactive
     //while(i<MAX_NUM_TOWERS) {
