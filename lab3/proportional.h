@@ -26,7 +26,7 @@
 #define GAIN_KD_NUM 10
 #define GAIN_KD_DEN 10
 
-#define FWD_SPEED 30 // Default forward speed should be 30
+#define FWD_SPEED 15 // Default forward speed should be 30
 #define THETA_FWD 45 // straight angle (zero/forward)
 #define HISTORY_LENGTH 10
 #define SERVO_CAL 40

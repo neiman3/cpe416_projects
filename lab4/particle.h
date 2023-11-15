@@ -3,7 +3,7 @@
 //
 
 
-#define LOCAL
+// #define LOCAL
 
 #ifndef PARTICLE_H
 #define PARTICLE_H

@@ -215,9 +215,10 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
         // expectation is expected sensor probability
         // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
         error = expectation - p_tower;
-        data[i].weight = 1 - ((expectation<0)?-expectation:expectation);
+        data[i].weight = 1 - ((error<0)?-error:error);
         // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
+    normalize_particle_weights(data, num_particles);
 }
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)
@@ -293,7 +294,7 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
 
 void bubble_sort(particle *data, uint8_t num_particles) {
     uint8_t index = 0;
-    particle t;
+    // particle t;
     while ((index-1) < num_particles) {
         if (data[index].weight >= data[index+1].weight) {
             // in order, continue

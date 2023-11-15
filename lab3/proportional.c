@@ -1,6 +1,6 @@
 
 
-#include "neuralnet.h"
+// #include "neuralnet.h"
 #include "proportional.h"
 // #define LOCAL
 
