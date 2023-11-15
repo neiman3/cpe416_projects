@@ -55,11 +55,13 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
     int16_t insertion_index = ((int16_t) num_particles);
     insertion_index--;
 
-    // Calculate number of inserts minus itself
-    num_inserts = ((int16_t) (data[counter].weight * (float) num_particles)); // number of times to insert the new particle (by weight)
-    if (num_inserts > 0) { num_inserts -= 1; }
-    if (num_inserts > num_particles) {num_particles = num_particles;}
     while (read_index < insertion_index) {
+
+        // Calculate number of inserts minus itself
+        num_inserts = ((int16_t) (data[counter].weight * (float) num_particles)); // number of times to insert the new particle (by weight)
+        if (num_inserts > 0) { num_inserts -= 1; }
+        if (num_inserts > num_particles) {num_particles = num_particles;}
+
         for (int16_t i = 0; i < num_inserts; i++) {
             data[insertion_index] = data[read_index];
             insertion_index--;
@@ -207,10 +209,14 @@ float trapezoidal_pdf(float theta_read, float theta_tower) {
 void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_t num_particles, tower *tower_positions, uint8_t num_towers) {
     float p_tower = map(sensor_reading, DIST_THRESHOLD_LOW, DIST_THRESHOLD_HIGH, 0, 1); // probability of there being a tower currently at the sensor reading
     float expectation;
+    float error = 0;
     for (uint8_t i=0; i<num_particles; i++) {
-        expectation = calculate_position_probability(data[i].position, tower_positions, num_towers);
+        expectation = calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers);
         // expectation is expected sensor probability
-        data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
+        // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
+        error = expectation - p_tower;
+        data[i].weight = 1 - ((expectation<0)?-expectation:expectation);
+        // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
 }
 
@@ -265,8 +271,12 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
     for (int i = 0; i < num_particles; i++) {
         // variance = ∑ (x-µ)^2 / N
         angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180);
-        st_dev_result_real += powf((cosf(angle) - mean_result_real), 2) / (float) num_particles;
-        st_dev_result_cplx += powf((sinf(angle) - mean_result_cplx), 2) / (float) num_particles;
+        // weighted average
+        st_dev_result_real += powf((cosf(angle) - mean_result_real), 2) * data[i].weight;
+        st_dev_result_cplx += powf((sinf(angle) - mean_result_cplx), 2) * data[i].weight;
+//      Standard numeric average
+//        st_dev_result_real += powf((cosf(angle) - mean_result_real), 2) / (float) num_particles;
+//        st_dev_result_cplx += powf((sinf(angle) - mean_result_cplx), 2) / (float) num_particles;
     }
     st_dev_result_real = sqrtf(st_dev_result_real);
     st_dev_result_cplx = sqrtf(st_dev_result_cplx);
