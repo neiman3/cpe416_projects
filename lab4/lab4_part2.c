@@ -6,6 +6,8 @@
  *   Lab 3 Part 1: Proportional struct testing.
  *      Test the motor_command struct and the compute_proportional command
  *         ( wrapper for Lab2 in a single function )
+ * 
+ * TESTING ON ROBOT
  *
  **/
 #define LOCAL
