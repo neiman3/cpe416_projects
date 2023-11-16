@@ -98,6 +98,7 @@ void sensor_test() {
 }
 
 void prompt_tower(tower *towers) {
+    uint8_t target_sel = 0;
     // Get the towers from the user
     for (uint8_t t=0;t<MAX_NUM_TOWERS;t++) {
         int8_t accel_read_value;
@@ -126,8 +127,9 @@ void prompt_tower(tower *towers) {
             _delay_ms(TIMESTEP);
         }
         while (get_btn()){}
-        if (!towers[t].active) {continue;} // it was not active, so don't set anything
+        _delay_ms(10);
 
+        if (!towers[t].active) {continue;} // it was not active, so don't set anything
         // Tower position (angle)
         uint16_t angle = (uint16_t) fixed_point_pos_to_float(towers[t].position);
         while (!get_btn()) {
@@ -158,12 +160,13 @@ void prompt_tower(tower *towers) {
         }
         towers[t].position = float_to_fixed_point_pos(angle);
         while (get_btn()){}
+        _delay_ms(10);
 
         // Set target
         lcd_cursor(0,1);
         print_string("Standard");
         towers[t].target=0;
-        while (!get_btn()) {
+        while (!get_btn() && (!target_sel)) {
             if (read_accel(10) > 5) {
                 // Target
                 lcd_cursor(0,1);
@@ -178,6 +181,8 @@ void prompt_tower(tower *towers) {
             }
             _delay_ms(TIMESTEP);
         }
+        if (!target_sel)
+            target_sel = towers[t].target;
         while (get_btn()){}
         clear_screen();
     }
@@ -220,9 +225,21 @@ int main(void) {
     init_encoder();
     motor(MOTOR_L,0);
     motor(MOTOR_R,0);
-    clear_screen(); lcd_cursor(0,0);
+    clear_screen(); lcd_cursor(0,0); print_string("Where");lcd_cursor(0,1); print_string("VaderBot");
+    uint8_t skip_prompt = 0;
+    for (uint8_t i=0;i<255;i++){
+        _delay_ms(10);
+        if (get_btn()) {
+            skip_prompt = 1;
+            break;
+        }
+    }
 
-    prompt_tower(towers);
+
+    #ifndef DEBUG
+    if (!skip_prompt)
+        prompt_tower(towers);
+    #endif
 
     // Calculate tower stats
     uint8_t num_towers = calc_num_towers(towers, MAX_NUM_TOWERS);
@@ -267,6 +284,9 @@ int main(void) {
 
             if (estimated_position_stdev < LOCALIZED_THRESHOLD && (estimated_position > (target_position - TARGET_WINDOW_DEGREES / 2)) && (estimated_position < (target_position + TARGET_WINDOW_DEGREES / 2))) {
                 clear_screen();lcd_cursor(0,0);print_string("Target");
+                motor(MOTOR_L, 40);
+                motor(MOTOR_R, -40);
+                
                 while(1) {}
             }
         }
