@@ -17,7 +17,7 @@
 #define VSTATE_W_W 50 // white on white Vstate threshold
 #define VSTATE_B_B 10 // black on black threshold
 
-#define GAIN_KP_NUM 25
+#define GAIN_KP_NUM 18
 #define GAIN_KP_DEN 10
 
 #define GAIN_KI_NUM 10

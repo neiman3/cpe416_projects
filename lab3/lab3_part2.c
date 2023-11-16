@@ -39,7 +39,7 @@
 #define MAX_TRAIN_DATA  100 // maximum number of training data points
 #define TIMESTEP 10
 
-#define DEBUG 0     // 0 -> normal run, 1 -> use DB vals
+// #define DEBUG 0     // 0 -> normal run, 1 -> use DB vals
 #define DB_EPOCHS 10
 
 int main(void) {
