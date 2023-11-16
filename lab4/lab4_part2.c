@@ -35,6 +35,7 @@
 #define DEAD_ZONE 20
 
 #define TICKS_UPDATE 10
+#define TICKS_TO_DEG 1.33
 
 #define TIMESTEP        10
 #define UPDATE_INTV     100 // Time (ms) delay between simulation cycles
@@ -199,14 +200,14 @@ int main(void) {
     // Tower 2 (vader) at 135º
     // Tower 3 at 180º
     // Tower 4 not enabled
-    towers[0].position = float_to_fixed_point_pos(0);
+    towers[0].position = float_to_fixed_point_pos(90);
     towers[0].active = 1;
-    towers[0].target = 0;
-    towers[1].position = float_to_fixed_point_pos(90);
+    towers[0].target = 1;
+    towers[1].position = float_to_fixed_point_pos(180);
     towers[1].active = 1;
-    towers[1].target = 1;
-    towers[2].position = float_to_fixed_point_pos(180);
-    towers[2].active = 1;
+    towers[1].target = 0;
+    towers[2].position = float_to_fixed_point_pos(225);
+    towers[2].active = 0;
     towers[2].target = 0;
     towers[3].position = float_to_fixed_point_pos(225);
     towers[3].active = 0;
@@ -257,8 +258,10 @@ int main(void) {
 
     float estimated_position = 0;
     float estimated_position_stdev = 0;
+    float target_err;
     uint8_t sensor_reading = 1;
     uint8_t position_delta;
+    right_encoder = 0;
     while(1) {
 
         // self-driving line following
@@ -269,6 +272,7 @@ int main(void) {
         motor_command mc = compute_proportional(sensor_l, sensor_r);
         motor(MOTOR_L, mc.left);
         motor(MOTOR_R, mc.right);
+
 
         if (right_encoder >= TICKS_UPDATE) {
             // time to update the particles
@@ -281,22 +285,67 @@ int main(void) {
             calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
             resample(particles, NUM_PARTICLES, towers, num_towers);
             mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_stdev);
-
-            if (estimated_position_stdev < LOCALIZED_THRESHOLD && (estimated_position > (target_position - TARGET_WINDOW_DEGREES / 2)) && (estimated_position < (target_position + TARGET_WINDOW_DEGREES / 2))) {
-                clear_screen();lcd_cursor(0,0);print_string("Target");
-                motor(MOTOR_L, 40);
-                motor(MOTOR_R, -40);
-                
-                while(1) {}
+            if (estimated_position_stdev < LOCALIZED_THRESHOLD) {
+                // Done with localization
+                break;
             }
         }
             // data dump
         lcd_cursor(0,0);print_string("p"); print_num((uint16_t) estimated_position);print_string("   ");
-        lcd_cursor(4,0);print_string("s"); print_num(sensor_reading);print_string("   ");
+        lcd_cursor(4,0);print_string("s"); print_num((uint8_t) sensor_reading);print_string("   ");
         lcd_cursor(0,1);print_string("c"); print_num((uint8_t) estimated_position_stdev); print_string("."); print_num((uint16_t) (estimated_position_stdev * 1000));print_string("   ");
         lcd_cursor(6,1);print_string("w"); print_num(right_encoder);print_string("   ");
         _delay_ms(TIMESTEP);
     }
+
+    // Target acquired- find tower
+    clear_screen(); 
+    lcd_cursor(0,0); print_string("T");print_num(target_position);
+    lcd_cursor(0,1); print_string("E");print_num(estimated_position);
+    float error;
+    error = wrap_degrees(target_position - estimated_position);
+    lcd_cursor(4,1);print_string()
+    while(1) {} 
+    // lcd_cursor(0,1); print_string("Locked");
+    uint16_t target_encoder_position = 0;
+    target_err = target_position - estimated_position;
+    if (!((target_err > (-1 * TARGET_WINDOW_DEGREES / 2)) || (target_err < (TARGET_WINDOW_DEGREES / 2)))) {
+        // We are NOT within the 20º window of the target
+        target_encoder_position = (uint16_t) (wrap_degrees(target_err) * TICKS_TO_DEG * 0.97);
+    }
+    right_encoder = 0;
+
+    lcd_cursor(1,0); print_num(estimated_position);;print_string("e");print_num(target_err);
+    lcd_cursor(0,1); print_num(target_encoder_position);print_string(" ");
+    
+
+    // Line follow until target
+    u08 sensor_l, sensor_r;
+    while (right_encoder < target_encoder_position) {
+        sensor_l = analog(PIN_SENSOR_L);
+        sensor_r = analog(PIN_SENSOR_R);
+        sensor_reading = analog(PIN_SENSOR_DIST);
+        motor_command mc = compute_proportional(sensor_l, sensor_r);
+        motor(MOTOR_L, mc.left);
+        motor(MOTOR_R, mc.right);
+        _delay_ms(TIMESTEP);
+        lcd_cursor(4,1);print_num(right_encoder);print_string("   ");
+    }
+    lcd_cursor(0,0);print_string("D");
+
+    motor(MOTOR_L, 0);
+    motor(MOTOR_R, 0);
+
+    while(1) {}
+
+    // Reached target, knock it over
+    // reset encoder counter
+    // while encoder < 35 : left motor -40 right motor +40
+    // stop motor
+    // motor +40 +40
+    // delay for 1 second
+    // stop motor
+    
 
 #endif
 
