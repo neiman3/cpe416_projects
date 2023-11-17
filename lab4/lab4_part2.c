@@ -10,7 +10,7 @@
  * TESTING ON ROBOT
  *
  **/
-// #define LOCAL
+ #define LOCAL
 
 #include "../library/globals.h"
 #include <math.h>
@@ -212,6 +212,13 @@ int main(void) {
     towers[3].position = float_to_fixed_point_pos(225);
     towers[3].active = 0;
     towers[3].target = 0;
+    // Calculate tower stats
+    uint8_t num_towers = calc_num_towers(towers, MAX_NUM_TOWERS);
+    float target_position = calc_target_tower(towers, num_towers);
+
+    // Particles
+    particle particles[NUM_PARTICLES]; // initialize array
+    init_particles(particles, NUM_PARTICLES, towers, num_towers);
 
     #ifdef LOCAL
 
@@ -242,9 +249,7 @@ int main(void) {
         prompt_tower(towers);
     #endif
 
-    // Calculate tower stats
-    uint8_t num_towers = calc_num_towers(towers, MAX_NUM_TOWERS);
-    float target_position = calc_target_tower(towers, num_towers);
+
 
     lcd_cursor(0,0); print_num(num_towers); print_string(" Towers");
     lcd_cursor(0,1);print_string("Tgt: ");print_num((uint16_t) target_position);print_string("  ");
@@ -252,9 +257,7 @@ int main(void) {
         _delay_ms(10);
     }
 
-    // Particles
-    particle particles[NUM_PARTICLES]; // initialize array
-    init_particles(particles, NUM_PARTICLES, towers, num_towers);
+
 
     float estimated_position = 0;
     float estimated_position_stdev = 0;
