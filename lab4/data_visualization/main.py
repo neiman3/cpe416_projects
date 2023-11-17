@@ -3,8 +3,13 @@ import random
 from matplotlib.animation import FFMpegWriter
 import math
 r = []
+read_towers = 0
 with open("OUTPUT.txt", 'r') as f:
     for line in f:
+        if read_towers == 0:
+            towers = [(int(x) if x.isnumeric() else None) for x in line.split('\t')]
+            read_towers = 1
+            continue
         t = line.split("\t")
         if t[-1:] == ['\n']:
             t = t[:-1]
@@ -17,8 +22,6 @@ writer = FFMpegWriter(fps=24, metadata=metadata)
 fig = plt.figure()
 skip_frames = 0
 
-# towers = [15, 135, 180]
-towers = [15]
 
 iter = []
 stdev = []
@@ -50,9 +53,10 @@ with writer.saving(fig, "writer_test.mp4", 100):
 
             # towers
             for t in towers:
-                x = math.cos(t * math.pi / 180) * 1.2
-                y = math.sin(t * math.pi / 180) * 1.2
-                plt.scatter([x], [y], c='#000000', s=30)
+                if t is not None:
+                    x = math.cos(t * math.pi / 180) * 1.2
+                    y = math.sin(t * math.pi / 180) * 1.2
+                    plt.scatter([x], [y], c='#000000', s=30)
 
             plt.text(-1.75, 1.25, ("σ: {:0.3f}; err: {:3.3f}º".format(float(l[0][2]), min(abs(float(l[0][0])-float(l[0][1])), abs(360-(float(l[0][0])-float(l[0][1])))))), fontdict=None)
             # plt.legend(["Particles", "Actual position", "Position estimate", "Tower"])

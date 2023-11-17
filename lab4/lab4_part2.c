@@ -99,31 +99,9 @@ void sensor_test() {
 int main(void) {
 
 
-    uint8_t num_towers = 3;
+    uint8_t num_towers = 1;
     tower towers[MAX_NUM_TOWERS];
-    // hard code input data for now
-    // Tower 1 at 15º
-    // Tower 2 (vader) at 135º
-    // Tower 3 at 180º
-    // Tower 4 not enabled
-    
-    // TODO: input # towers
-    //clear_screen();
-    //int i;
-    //for(i=0; i<num_towers; i++) {
-    //    lcd_cursor(0,0);
-    //    print_string("Tower #");
-    //    print_num(i);
-    //    while()
-    //    towers[i].active = 1;
-    //}
-    // set remaining towers to inactive
-    //while(i<MAX_NUM_TOWERS) {
-        //towers[i].active = 0;
-        //i++;
-    //}
-
-    towers[0].position = float_to_fixed_point_pos(15);
+    towers[0].position = float_to_fixed_point_pos(90);
     towers[0].active = 1;
     towers[0].target = 0;
     towers[1].position = float_to_fixed_point_pos(135);
@@ -135,6 +113,7 @@ int main(void) {
     towers[3].position = 0;
     towers[3].active = 0;
     towers[3].target = 0;
+    float simulated_position = 200; //  start position
 
     particle particles[NUM_PARTICLES]; // initialize array
     init_particles(particles, NUM_PARTICLES, towers, 3);
@@ -186,11 +165,17 @@ int main(void) {
 
 #ifdef LOCAL
     // simulated
-    float simulated_position = 200;
+    
     uint16_t simulated_ticks = 0;
     float estimated_position;
     float estimated_position_confidence;
     uint8_t sensor_reading;
+
+    // print number of towers for Python script
+    for (int i=0; i< num_towers; i++){
+        printf("%d", fixed_point_pos_to_float((uint16_t) towers[i].position))
+    }
+
     printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
     for (int i=0;i<NUM_PARTICLES;i++) {
         printf("Particle %d location\tParticle %d weight\t", i,i);
