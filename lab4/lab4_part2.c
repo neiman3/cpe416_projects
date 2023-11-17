@@ -195,7 +195,9 @@ void prompt_tower(tower *towers) {
 int main(void) {
 
 
-    uint8_t num_towers = 2;
+#ifdef LOCAL
+    float simulated_position = 239;
+#endif
     tower towers[MAX_NUM_TOWERS];
     towers[0].position = float_to_fixed_point_pos(15);
     towers[0].active = 1;
@@ -209,6 +211,7 @@ int main(void) {
     towers[3].position = float_to_fixed_point_pos(225);
     towers[3].active = 0;
     towers[3].target = 0;
+
     // Calculate tower stats
     uint8_t num_towers = calc_num_towers(towers, MAX_NUM_TOWERS);
     float target_position = calc_target_tower(towers, num_towers);
