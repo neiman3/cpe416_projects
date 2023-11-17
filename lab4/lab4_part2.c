@@ -99,12 +99,12 @@ void sensor_test() {
 int main(void) {
 
 
-    uint8_t num_towers = 1;
+    uint8_t num_towers = 2;
     tower towers[MAX_NUM_TOWERS];
-    towers[0].position = float_to_fixed_point_pos(90);
+    towers[0].position = float_to_fixed_point_pos(15);
     towers[0].active = 1;
     towers[0].target = 0;
-    towers[1].position = float_to_fixed_point_pos(135);
+    towers[1].position = float_to_fixed_point_pos(90);
     towers[1].active = 1;
     towers[1].target = 1;
     towers[2].position = float_to_fixed_point_pos(180);
@@ -173,8 +173,8 @@ int main(void) {
 
     // print number of towers for Python script
     for (int i=0; i< num_towers; i++){
-        printf("%d", fixed_point_pos_to_float((uint16_t) towers[i].position))
-    }
+        printf("%d\t", (uint16_t) fixed_point_pos_to_float(towers[i].position));
+    }printf("\n");
 
     printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
     for (int i=0;i<NUM_PARTICLES;i++) {
@@ -194,10 +194,10 @@ int main(void) {
 
             // Take a simulated sensor reading
             sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) *
-                                        calculate_position_probability(simulated_position, towers, 3) / 0.1 +
+                                        calculate_position_probability(simulated_position, towers, num_towers) / 0.1 +
                                         DIST_THRESHOLD_LOW);
-            calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, 3);
-            resample(particles, NUM_PARTICLES, towers, 3);
+            calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
+            resample(particles, NUM_PARTICLES, towers, num_towers);
             mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
 
             // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
