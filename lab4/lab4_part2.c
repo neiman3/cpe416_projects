@@ -258,7 +258,6 @@ int main(void) {
 
     float estimated_position = 0;
     float estimated_position_stdev = 0;
-    float target_err;
     uint8_t sensor_reading = 1;
     uint8_t position_delta;
     right_encoder = 0;
@@ -304,20 +303,19 @@ int main(void) {
     lcd_cursor(0,1); print_string("E");print_num(estimated_position);
     float error;
     error = wrap_degrees(target_position - estimated_position);
-    lcd_cursor(4,1);print_string()
-    while(1) {} 
-    // lcd_cursor(0,1); print_string("Locked");
-    uint16_t target_encoder_position = 0;
-    target_err = target_position - estimated_position;
-    if (!((target_err > (-1 * TARGET_WINDOW_DEGREES / 2)) || (target_err < (TARGET_WINDOW_DEGREES / 2)))) {
-        // We are NOT within the 20º window of the target
-        target_encoder_position = (uint16_t) (wrap_degrees(target_err) * TICKS_TO_DEG * 0.97);
+    if (error > (360 - TARGET_WINDOW_DEGREES / 2)) {
+        // within -10º
+        error = 0;
     }
-    right_encoder = 0;
+    if (error < TARGET_WINDOW_DEGREES / 2) {
+        // within +10º
+        error = 0;
+    }
+    lcd_cursor(4,1);print_string("X");print_num(error);
 
-    lcd_cursor(1,0); print_num(estimated_position);;print_string("e");print_num(target_err);
-    lcd_cursor(0,1); print_num(target_encoder_position);print_string(" ");
     
+    uint16_t target_encoder_position = 0;
+    target_encoder_position = (uint16_t) ((error) * TICKS_TO_DEG * 0.95);
 
     // Line follow until target
     u08 sensor_l, sensor_r;
@@ -336,15 +334,32 @@ int main(void) {
     motor(MOTOR_L, 0);
     motor(MOTOR_R, 0);
 
-    while(1) {}
-
+    
     // Reached target, knock it over
     // reset encoder counter
+    right_encoder = 0;
     // while encoder < 35 : left motor -40 right motor +40
+    while (right_encoder < 32) {
+        motor(MOTOR_L, -20);
+        motor(MOTOR_R, 20);
+    }
+    motor(MOTOR_L, 0);
+    motor(MOTOR_R, 0);
+    _delay_ms(100);
+    motor(MOTOR_L, -90);
+    motor(MOTOR_R, -90);
+    _delay_ms(255);
+    _delay_ms(255);
+    _delay_ms(255);
+
+    motor(MOTOR_L, 0);
+    motor(MOTOR_R, 0);
     // stop motor
     // motor +40 +40
     // delay for 1 second
     // stop motor
+    while(1) {}
+
     
 
 #endif
