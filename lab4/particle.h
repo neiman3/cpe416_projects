@@ -3,7 +3,7 @@
 //
 
 
-#define LOCAL
+//  #define LOCAL
 
 #ifndef PARTICLE_H
 #define PARTICLE_H
@@ -25,7 +25,8 @@
 #define NUM_PARTICLES 100
 #define WEIGHT_CONSTANT 0.1
 #define NUM_RANDOM_INSERTS 1
-#define LOCALIZED_THRESHOLD 0.75
+#define LOCALIZED_THRESHOLD 0.5
+#define TARGET_WINDOW_DEGREES 20
 
 #define MN_CONV_FACTOR ((float) MAX_POSITION / 360.0)
 
@@ -62,5 +63,7 @@ float wrap_degrees(float data);
 void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_dev);
 uint16_t float_to_fixed_point_pos(float data);
 void bubble_sort(particle *data, uint8_t num_particles);
+uint8_t calc_num_towers(tower *data, uint8_t max_num_towers);
+float calc_target_tower(tower *data, uint8_t num_towers);
 
 #endif

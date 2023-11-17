@@ -43,6 +43,11 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="Lab4Testing" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -122,6 +127,10 @@
       <workItem from="1699918493209" duration="3886000" />
       <workItem from="1699990868236" duration="1154000" />
       <workItem from="1700065319705" duration="14000" />
+      <workItem from="1700066788825" duration="5771000" />
+      <workItem from="1700073313087" duration="921000" />
+      <workItem from="1700179347823" duration="1593000" />
+      <workItem from="1700237761130" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="Testing and introduce mean and stev fuinctions">
       <option name="closed" value="true" />
@@ -209,11 +218,6 @@
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/particle.c</url>
-          <line>47</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/lab4_part2.c</url>
           <line>120</line>
           <option name="timeStamp" value="13" />
@@ -235,11 +239,5 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="CMakeRunConfiguration">
-        <watch expression="data[i].weight" />
-        <watch expression="fixed_point_pos_to_float(data[i].position)" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>

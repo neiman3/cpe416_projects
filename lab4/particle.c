@@ -22,7 +22,7 @@ float fixed_point_pos_to_float(uint16_t data) {
 }
 uint16_t float_to_fixed_point_pos(float data) {
     return (uint16_t) (data * MN_CONV_FACTOR); // magic number = 50,000 / 360.0
-}
+    }
 
 // initialize particles randomly. only run once
 // make a random distribution of particles around a 360º circle
@@ -163,12 +163,15 @@ void motion_update(particle *data, uint8_t num_particles, uint16_t position_delt
     // Number of degrees per tick: 0.739 (σ=0.0139)
     // Number of ticks per degree: 1.35 (σ=0.0256)
     float pos=0;
+    uint16_t posf;
     for (int i=0; i<num_particles; i++){
         // for each particle:
         pos = fixed_point_pos_to_float(data[i].position); // convert stored uint16 to float degrees
         pos += (float) position_delta * (float) 0.7397667; // add the robot position delta (converted to degrees) to particle position
         pos = add_noise(pos, (float) 0.013909689); // Apply noise based on the motion model
-        data[i].position = float_to_fixed_point_pos(wrap_degrees(pos)); // Wrap degrees (0-360) and convert back to uint16. Restore
+        pos = wrap_degrees(pos);
+        posf = float_to_fixed_point_pos(wrap_degrees(pos));
+        data[i].position = posf; // Wrap degrees (0-360) and convert back to uint16. Restore
     }
 }
 
@@ -226,7 +229,7 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
         // expectation is expected sensor probability
         // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
         error = expectation - p_tower;
-        data[i].weight = 1 - ((error<0)?-error:error);
+        data[i].weight += 1 - ((error<0)?-error:error);
         // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
     normalize_particle_weights(data, num_particles);
@@ -234,12 +237,12 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
 
 // Wrap an angular position around so that it is always given in positive degree angle of one full rotation (0-360)
 float wrap_degrees(float data) {
-    while(data < 0) {
-        data += 360;
+    if (data > 360.0) {
+        data -= ((uint16_t) (data / 360.0)) * 360;
+    } else if (data < 0) {
+        data += ((uint16_t) (data / 360.0) + 1) * 360;
     }
-    while(data > 360) {
-        data -= 360;
-    }
+    
     return data;
 }
 
@@ -304,16 +307,29 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
 
 
 void bubble_sort(particle *data, uint8_t num_particles) {
-    uint8_t index = 0;
-    // particle t;
-    while ((index-1) < num_particles) {
-        if (data[index].weight >= data[index+1].weight) {
-            // in order, continue
-            index++;
-        } else {
-            // swap
-            swap_particles(&data[index], &data[index+1]);
-            index = 0;
+    uint8_t i, j;
+    for (i=0; i<num_particles-1;i++){
+        for (j=0; j<(num_particles - i - 1); j++) {
+            if (data[j].weight < data[j + 1].weight) {
+                swap_particles(&data[j], &data[j + 1]);
+            }
         }
     }
+}
+
+uint8_t calc_num_towers(tower *data, uint8_t max_num_towers) {
+    uint8_t result=0;
+    for (uint8_t i = 0; i< max_num_towers; i++){
+        result += data[i].active;
+    }
+    return result;
+}
+
+float calc_target_tower(tower *data, uint8_t num_towers) {
+    for (uint8_t i=0; i<num_towers; i++) {
+        if (data[i].target) {
+            return fixed_point_pos_to_float(data[i].position);
+        }
+    }
+    return 0;
 }
