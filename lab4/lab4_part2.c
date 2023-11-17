@@ -194,16 +194,13 @@ void prompt_tower(tower *towers) {
 
 int main(void) {
 
+
+    uint8_t num_towers = 2;
     tower towers[MAX_NUM_TOWERS];
-    // hard code input data for now
-    // Tower 1 at 15º
-    // Tower 2 (vader) at 135º
-    // Tower 3 at 180º
-    // Tower 4 not enabled
-    towers[0].position = float_to_fixed_point_pos(90);
+    towers[0].position = float_to_fixed_point_pos(15);
     towers[0].active = 1;
-    towers[0].target = 1;
-    towers[1].position = float_to_fixed_point_pos(180);
+    towers[0].target = 0;
+    towers[1].position = float_to_fixed_point_pos(90);
     towers[1].active = 1;
     towers[1].target = 0;
     towers[2].position = float_to_fixed_point_pos(225);
@@ -213,13 +210,6 @@ int main(void) {
     towers[3].active = 0;
     towers[3].target = 0;
 
-    #ifdef LOCAL
-
-    // Print the tower locations
-    for (uint8_t i=0; i<num_towers; i++) {
-        printf("%d\t", (uint16_t) fixed_point_pos_to_float(towers[i].position));
-    } printf("\n");
-    #endif
 
 #ifndef LOCAL
     init();
@@ -364,59 +354,60 @@ int main(void) {
 
 #endif
 
- #ifdef LOCAL
-     // simulated
-     float simulated_position;
-     uint16_t simulated_ticks = 0;
-     float estimated_position;
-     float estimated_position_confidence;
-     uint8_t sensor_reading;
+#ifdef LOCAL
+    // simulated
+    
+    uint16_t simulated_ticks = 0;
+    float estimated_position;
+    float estimated_position_confidence;
+    uint8_t sensor_reading;
 
-     // print header
-     printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
-     for (int i=0;i<NUM_PARTICLES;i++) {
-         printf("Particle %d location\tParticle %d weight\t", i,i);
-     }printf("\n");
+    // print number of towers for Python script
+    for (int i=0; i< num_towers; i++){
+        printf("%d\t", (uint16_t) fixed_point_pos_to_float(towers[i].position));
+    }printf("\n");
 
-     // set the default position
-     simulated_position = 160;
+    printf("Actual position\tEstimated position\tParticle StDev\tSensor\t");
+    for (int i=0;i<NUM_PARTICLES;i++) {
+        printf("Particle %d location\tParticle %d weight\t", i,i);
+    }printf("\n");
+//    for (int b=0; b<360; b+=10) {
+//        init_particles(particles, NUM_PARTICLES, towers, 3);
+//        simulated_position = (float) b;
+        uint16_t i;
+        for (i = 0; i < 200; i++) {
+            // advance robot position by 15  ticks (11º)
+            simulated_ticks += 10;
+            simulated_position += add_noise(simulated_ticks * 0.739, 0.1);
+            simulated_position = wrap_degrees(simulated_position);
+            motion_update(particles, NUM_PARTICLES, simulated_ticks);
+            simulated_ticks = 0; // reset counter to get next delt
 
-     uint16_t i;
-     for (i = 0; i < 100; i++) {
-         // advance robot position by 15  ticks (11º)
-         simulated_ticks += 10;
-         simulated_position += add_noise(simulated_ticks * 0.739, 0.5);
-         simulated_position = wrap_degrees(simulated_position);
-         motion_update(particles, NUM_PARTICLES, simulated_ticks);
-         simulated_ticks = 0; // reset counter to get next delt
+            // Take a simulated sensor reading
+            sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) *
+                                        calculate_position_probability(simulated_position, towers, num_towers) / 0.1 +
+                                        DIST_THRESHOLD_LOW);
+            calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
+            resample(particles, NUM_PARTICLES, towers, num_towers);
+            mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
 
-         // Take a simulated sensor reading
-         sensor_reading = (uint8_t) ((DIST_THRESHOLD_HIGH - DIST_THRESHOLD_LOW) *
-                                     calculate_position_probability(simulated_position, towers, num_towers) / 0.1 +
-                                     DIST_THRESHOLD_LOW);
+            // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
+            //     // localized
+            //     break;
+            // }
 
-         // Robot calculates probability of a tower
-         calculate_sensor_probability(sensor_reading, particles, NUM_PARTICLES, towers, num_towers);
-         // Resample particles based on weight
-         resample(particles, NUM_PARTICLES, towers, num_towers);
-         // Calculate weighted mean and stdev
-         mean_st_dev(particles, NUM_PARTICLES, &estimated_position, &estimated_position_confidence);
+            // Weights dump
+                    printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
+                    for (int i=0; i<NUM_PARTICLES; i++) {
+                        printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
+                    }
+                    printf("\n");
 
-         // if (estimated_position_confidence < LOCALIZED_THRESHOLD) {
-         //     // localized
-         //     break;
-         // }
-
-         // Weights dump
-         printf("%3.2f\t%3.2f\t%3.4f\t%d\t", simulated_position, estimated_position, estimated_position_confidence, sensor_reading);
-         for (int i=0; i<NUM_PARTICLES; i++) {
-             printf("%3.2f\t%1.3f\t", fixed_point_pos_to_float(particles[i].position), particles[i].weight);
-         }
-         printf("\n");
-
-     }
-
- #endif
+            // _delay_ms(TIMESTEP);
+        }
+//        printf("%3.1f, %3.1f, %3.1f, %0.3f, %d\n", (float) b, simulated_position, estimated_position, estimated_position_confidence, i);
+//    }
+#endif
 
     return 0;
 }

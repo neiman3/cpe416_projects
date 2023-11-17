@@ -70,6 +70,17 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
         read_index++;
     }
 
+    // insert low weighted random particles for the zero particles
+    for (int i=num_particles-1; i>=0;i--){
+        if (data[i].weight != 0) {
+            break;
+        }
+        float random_position;
+        random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
+        data[i].position = float_to_fixed_point_pos(random_position);
+        data[i].weight = (float) 1.0 / (float) num_particles / 2;
+    }
+
 
     // normalize
     normalize_particle_weights(data, num_particles);
@@ -214,7 +225,7 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
     float expectation;
     float error = 0;
     for (uint8_t i=0; i<num_particles; i++) {
-        expectation = (float) calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers) * 10;
+        expectation = 10 * calculate_position_probability(fixed_point_pos_to_float(data[i].position), tower_positions, num_towers);
         // expectation is expected sensor probability
         // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
         error = expectation - p_tower;
