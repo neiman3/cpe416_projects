@@ -196,17 +196,17 @@ int main(void) {
 
 
 #ifdef LOCAL
-    float simulated_position = 239;
+    float simulated_position = 180;
 #endif
     tower towers[MAX_NUM_TOWERS];
-    towers[0].position = float_to_fixed_point_pos(15);
+    towers[0].position = float_to_fixed_point_pos(0);
     towers[0].active = 1;
     towers[0].target = 0;
-    towers[1].position = float_to_fixed_point_pos(90);
+    towers[1].position = float_to_fixed_point_pos(45);
     towers[1].active = 1;
     towers[1].target = 0;
-    towers[2].position = float_to_fixed_point_pos(225);
-    towers[2].active = 0;
+    towers[2].position = float_to_fixed_point_pos(90);
+    towers[2].active = 1;
     towers[2].target = 0;
     towers[3].position = float_to_fixed_point_pos(225);
     towers[3].active = 0;
@@ -381,7 +381,7 @@ int main(void) {
 //        init_particles(particles, NUM_PARTICLES, towers, 3);
 //        simulated_position = (float) b;
         uint16_t i;
-        for (i = 0; i < 200; i++) {
+        for (i = 0; i < 100; i++) {
             // advance robot position by 15  ticks (11º)
             simulated_ticks += 10;
             simulated_position += add_noise(simulated_ticks * 0.739, 0.1);

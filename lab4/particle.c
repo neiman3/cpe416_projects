@@ -70,16 +70,16 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
         read_index++;
     }
 
-    // insert low weighted random particles for the zero particles
-    for (int i=num_particles-1; i>=0;i--){
-        if (data[i].weight != 0) {
-            break;
-        }
-        float random_position;
-        random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
-        data[i].position = float_to_fixed_point_pos(random_position);
-        data[i].weight = (float) 1.0 / (float) num_particles / 2;
-    }
+//    // insert low weighted random particles for the zero particles
+//    for (int i=num_particles-1; i>=0;i--){
+//        if (data[i].weight > PARTICLE_WEIGHT_ZERO_THRESHOLD) {
+//            break;
+//        }
+//        float random_position;
+//        random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
+//        data[i].position = float_to_fixed_point_pos(random_position);
+//        data[i].weight = (float) 1.0 / (float) num_particles / 2;
+//    }
 
 
     // normalize
@@ -92,7 +92,7 @@ void resample(particle *data, uint8_t num_particles, tower *tower_positions, uin
         // pick a random particle and seed it with uniform weight, random position
         random_index = (uint8_t) (NUM_PARTICLES * (float) (uint32_t) rand() / (float) RAND_MAX);
         random_position = (float) (((float) (uint32_t) rand() / (float) RAND_MAX) * 360.0);
-        data[random_index].weight = (float) 1.0 / (float) NUM_PARTICLES;
+        data[random_index].weight = (float) 1.0 / (float) NUM_PARTICLES / (float) 2.0;
         data[random_index].position = float_to_fixed_point_pos(random_position);
     }
 
@@ -229,7 +229,7 @@ void calculate_sensor_probability(uint8_t sensor_reading, particle *data, uint8_
         // expectation is expected sensor probability
         // 1 - err, where err = | P(tower|theta_particle) - P(tower|sensor) |
         error = expectation - p_tower;
-        data[i].weight += 1 - ((error<0)?-error:error);
+        data[i].weight += 1 - ((error<0)?-error:error) * 0.95;
         // data[i].weight += add_noise( WEIGHT_CONSTANT * expectation * p_tower , (float) 0.0001);
     }
     normalize_particle_weights(data, num_particles);
@@ -277,8 +277,8 @@ void mean_st_dev(particle *data, uint8_t num_particles, float *mean, float *st_d
         // x = 1exp(jθ)
         // so real part cos(θ) and imag sin(θ)
         angle = fixed_point_pos_to_float(data[i].position) * (float) (M_PI / 180.0);
-        mean_result_real += cosf(angle) / (float) num_particles;
-        mean_result_cplx += sinf(angle) / (float) num_particles;
+        mean_result_real += cosf(angle) * data[i].weight;
+        mean_result_cplx += sinf(angle) * data[i].weight;
     }
     // calculate variance
     float st_dev_result_real = 0;
