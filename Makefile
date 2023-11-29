@@ -5,7 +5,7 @@ CLOCK_RATE = 16000000L
 #edit the device to match the device on your computer
 USB_ARR = $(shell ls /dev | grep cu.usb)
 MAC_DEVICE = `ls /dev/$(USB_ARR)`
-LAB = lab4
+LAB = lab5
 
 local: lab3/test.c
 	cc lab3/test.c -o main.o lab3/neuralnet.c lab3/proportional.c
@@ -16,7 +16,7 @@ main: main.c $(wildcard $(BOARD_LIB)/*.c)
 	avr-size main.elf
 
 p1: $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c)
-	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/proportional.c
+	/opt/homebrew/Cellar/avr-gcc@10/10.3.0_2/bin/avr-gcc -I$(BOARD_LIB) -DF_CPU=$(CLOCK_RATE) -Wall -mmcu=atmega645a -O2 -o main.elf $(SELF_DIR)/$(LAB)/$(LAB)_part1.c $(wildcard $(BOARD_LIB)/*.c) ./$(LAB)/proportional.c ./$(LAB)/lidar.c 
 	avr-objcopy -O ihex main.elf main.hex
 	avr-size main.elf
 	avrdude -pm645 -P $(MAC_DEVICE) -c arduino -F -u -U flash:w:main.hex
