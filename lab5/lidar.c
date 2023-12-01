@@ -9,40 +9,22 @@ extern volatile uint16_t right_encoder;
 */
 int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
     int16_t sweep_start, sweep_stop;
+    int16_t servo_direction;
     int16_t angle = 0;
     uint8_t scan_result;
     uint8_t magnitude = 0;
     u08 sensor_pins[2] = {3,4}; // Analog pins that correspond to sensors to read
     u08 sensor_value[2]; // sensor values array
 
-    if (scan_direction > 0) {
-        // scan clockwise
-        sweep_start = SWEEP_ANGLE_MIN;
-        sweep_stop = SWEEP_ANGLE_MAX;
-    } else {
-        // scan counterclockwise
-        sweep_start = SWEEP_ANGLE_MAX;
-        sweep_stop = SWEEP_ANGLE_MIN;
-
-    }
-
-
-    // TODO: Include breakout for the line scanner in the loop (return)
-    /* for(u08 i=0;i<2;i++) {
-            // Read ADC value
-            sensor_value[i] = analog(sensor_pins[i]);;
-        }
-    } while (sensor_value[0] < LINE_THRESHOLD || sensor_value[1] < LINE_THRESHOLD); Code from the sensor reading part */
-    // sweep min to max
-
-    point_servo(sweep_start);//     -128            +128            -5
-                    for (int16_t i=sweep_start;i<=sweep_stop;i+=SCAN_ANGLESTEP*scan_direction){
-        point_servo(i);
+    point_servo(sweep_start);
+    for (int16_t i=SWEEP_ANGLE_MIN;i<=SWEEP_ANGLE_MAX;i+=SCAN_ANGLESTEP){
+        servo_direction = i * scan_direction; // Symmetrical scan only- update for custom start stop
+        point_servo(servo_direction);
 
         // check sensor readings
-        for(u08 i=0;i<2;i++) {
+        for(u08 j=0;j<2;j++) {
             // Read ADC value
-            sensor_value[i] = analog(sensor_pins[i]);;
+            sensor_value[j] = analog(sensor_pins[j]);;
         }
 
         if (sensor_value[0] > threshold_value || sensor_value[1] > threshold_value) {
@@ -53,7 +35,7 @@ int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
         scan_result = analog(PIN_SENSOR_DIST);
         if (scan_result > magnitude) {
             magnitude = scan_result;
-            angle = i;
+            angle = servo_direction;
         }
     }
 
