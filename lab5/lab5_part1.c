@@ -24,6 +24,8 @@
 #define DEAD_ZONE 20
 #define DIST_THRESHOLD_LOW 38
 #define DIST_THRESHOLD_HIGH 100
+#define LINE_THRESHOLD 150
+#define BOUNDARY_WARNING 9000
 
 #define TICKS_UPDATE 10
 
@@ -48,81 +50,148 @@ ISR(PCINT1_vect) {
 }
 
 
-int8_t read_accel(uint8_t scale) {
-    // return value on a scale of 0 to (scale)
-    int8_t dir_x;
-    uint8_t accel_read = 128 - get_accel_y();
-    if (accel_read < (ACCEL_CENTER - DEAD_ZONE)) {
-        // its pointing in negative direction
-        dir_x = (accel_read - (ACCEL_CENTER - DEAD_ZONE));
-    } else if (accel_read > (ACCEL_CENTER + DEAD_ZONE)) {
-        // pointing in positive
-        dir_x = (accel_read - (ACCEL_CENTER + DEAD_ZONE));
-    } else {
-        // it's in the dead zone
-        dir_x = 0;
-    }
-    return dir_x * scale / 38;
-}
-
-void sensor_test() {
-    u08 sensor_l, sensor_r;
-    sensor_l = analog(PIN_SENSOR_L);
-    sensor_r = analog(PIN_SENSOR_R);
-    motor_command mc = compute_proportional(sensor_l, sensor_r);
-    motor(MOTOR_L, mc.left);
-    motor(MOTOR_R, mc.right);
-    // right encoder test
-    lcd_cursor(0,0);print_num(right_encoder);print_string("    ");
-    lcd_cursor(0,1);print_num(read_accel(10));print_string("    ");
-    lcd_cursor(4,0);print_num(analog(PIN_SENSOR_DIST));print_string("    ");
-}
-
-
-
 int main(void) {
+    u08 sensor_pins[2] = {3,4}; // Analog pins that correspond to sensors to read
+    u08 sensor_value[2]; // sensor values array
 
     // Initialize
     init();
     init_servo();
     init_encoder();
-    motor(MOTOR_L,0);
-    motor(MOTOR_R,0);
+    stop_motor();
     clear_screen();
 
-    int16_t target;
-    int8_t scan_dir=1;
-    uint8_t board_edge_flag = 0;
-    int8_t angle;
+    // while (!get_btn()) {
+    //     for(u08 i=0;i<2;i++) {
+    //         // Read ADC value
+    //         sensor_value[i] = analog(sensor_pins[i]);
+    //     }
+    //     for(u08 i=0;i<2;i++) {
+    //         // Read ADC value
+    //         lcd_cursor(4*i, 0);print_num(sensor_value[i]);print_string("   ");
+    //     }
+    //     _delay_ms(10);
+    // }
+
+    clear_screen();
+    lcd_cursor(0,0);print_string("BigFang");
+    lcd_cursor(0,1);print_string("Bot4i");
+
+    for (uint8_t i=0;i<255;i++){
+        _delay_ms(1);
+    }
+
+    int16_t target = 0;
+    int8_t scan_dir=-1;
     motor_command mc;
+    int16_t initial_target, delta_angle, encoder_target;
+    int8_t turning_direction;
 
-    point_servo(SWEEP_ANGLE_MIN);
-    wait_for_servo(SWEEP_ANGLE_MIN, SWEEP_ANGLE_MAX);
+    while(!get_btn()) {
+        lcd_cursor(0,0);
+        print_signed(target);print_string("       ");
+        target = scan(scan_dir, LINE_THRESHOLD);
+        scan_dir = -scan_dir;
+        
+    }
+    
 
+    /* Pursue the target */
     while(1) {
-        while (1) {
-            target = full_scan(scan_dir, 1, target);
+
+        // Do initial sweep
+        right_encoder = 0;
+
+        clear_screen();
+        lcd_cursor(0,0);print_string("Seeking");
+ 
+        initial_target = full_scan();
+
+        clear_screen();lcd_cursor(0,0);print_string("Seeking");
+        lcd_cursor(0,1);print_string("Locked");
+        // lcd_cursor(0,0);
+        // print_signed(initial_target);
+        // turn from +30 encoder ticks to target
+        delta_angle = initial_target - 90; // the relative angle from the robot to the target (signed)
+        if (delta_angle > 0) {
+            // target to the right
+            encoder_target = delta_angle * (int16_t) 60 / (int16_t) 180;
+            turning_direction = 1;
+        }
+        else {
+            encoder_target = -1 * delta_angle * (int16_t) 60 / (int16_t) 180;
+            turning_direction = -1;
+        }
+        // lcd_cursor(4,1);
+        // print_signed(encoder_target);
+        // lcd_cursor(0,1);
+        // print_signed(turning_direction);
+
+        /* Find the initial target */
+        right_encoder = 0;
+        while(right_encoder < encoder_target) {
+            // clear_screen();
+            // lcd_cursor(4,0);print_num(encoder_target);print_string("   ");
+            // turn based on direction
+            motor(0, turning_direction * FWD_SPEED * 2);
+            motor(1, turning_direction * -FWD_SPEED * 2);
+            _delay_ms(10);
+        }
+        stop_motor();
+
+        // motor_dir(0, &mc);
+        // motor(MOTOR_L, mc.left);
+        // motor(MOTOR_R, mc.right);
+        do {
+            target = scan(scan_dir, LINE_THRESHOLD);
             scan_dir = -scan_dir;
-            lcd_cursor(0,0);print_signed(target);print_string("   ");
+
+            // read line sensors
+            for(u08 i=0;i<2;i++) {
+                // Read ADC value
+                sensor_value[i] = analog(sensor_pins[i]);;
+            }
+
+            if (target == BOUNDARY_WARNING) {
+                stop_motor();
+                break;
+            }
+
             motor_dir(target * 50 / 100, &mc);
-            lcd_cursor(4,0);print_num(mc.left);
-            lcd_cursor(4,1);print_num(mc.right);
             motor(MOTOR_L, mc.left);
             motor(MOTOR_R, mc.right);
 
-        }
+        } while (sensor_value[0] < LINE_THRESHOLD || sensor_value[1] < LINE_THRESHOLD);
 
-        // Given angle of target, determine left and right motor power (prop. control)
-        mc.left = 50;
-        mc.right = 50;
+        clear_screen();
+        lcd_cursor(4,0);print_num(sensor_value[0]);
+        lcd_cursor(4,1);print_num(sensor_value[1]);
+            if (sensor_value[0] > LINE_THRESHOLD) {
+                // left sensor line - turn CW
+                clear_screen();
+                lcd_cursor(0,0);print_string("Boundary");
+                lcd_cursor(0,1);print_string("Warn (L)");
 
-        
-
-        if (board_edge_flag) {
-            // turn away from board edge
-        }
-
-        _delay_ms(TIMESTEP);
+                turning_direction = -1;
+            } else if (sensor_value[1] > LINE_THRESHOLD) {
+                // right sensor line - turn CCW
+                clear_screen();
+                lcd_cursor(0,0);
+                lcd_cursor(0,0);print_string("Boundary");
+                lcd_cursor(0,1);print_string("Warn (R)");
+                turning_direction = 1;
+            }
+            // backpedal for a bit
+            motor(MOTOR_L, -FWD_SPEED);
+            motor(MOTOR_R, -FWD_SPEED);
+            _delay_ms(200);
+            right_encoder = 0;
+            encoder_target = 60;
+            while(right_encoder < encoder_target) {
+                motor(MOTOR_L, turning_direction * FWD_SPEED * 2);
+                motor(MOTOR_R, turning_direction * -FWD_SPEED * 2);
+                _delay_ms(10);
+            } 
     }
 
     return 0;

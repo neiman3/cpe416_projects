@@ -51,7 +51,7 @@ int16_t abs(int16_t val) {
 
 
 
-void motor_dir(int16_t angle, int8_t *output) {
+void motor_dir(int16_t angle, motor_command *output) {
     // takes  a signed 8 bit "angle" +- 200 deg
     // robot is turning with two radii so it's not really an angle...
     // debugging mode = if button pressed, disable motor
@@ -74,8 +74,8 @@ void motor_dir(int16_t angle, int8_t *output) {
     power_l = bound(power_l, 0, 100);
     power_r = bound(power_r, 0, 100);
 
-    output[0] = power_l;
-    output[1] = power_r;
+    output->left = power_l;
+    output->right = power_r;
     return;
 }
 #ifndef LOCAL
@@ -192,3 +192,9 @@ float map_servo_int_to_float(uint8_t input_value) {
 
 
 float map_sensor_reading_to_float(u08 left) { return (float) (left - VWL) / (VBL - VWL); }
+
+void stop_motor() {
+    motor(0,0);
+    motor(1,0);
+    _delay_ms(10);
+}

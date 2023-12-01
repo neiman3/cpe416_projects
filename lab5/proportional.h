@@ -8,6 +8,10 @@
 #include "../library/globals.h"
 #include <math.h>
 
+#include <util/delay.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 // Tunings and threhsold
 #define VWL 170 // white threshold for left
 #define VWR 170 // white threshold for right
@@ -25,7 +29,7 @@
 #define GAIN_KD_NUM 10
 #define GAIN_KD_DEN 10
 
-#define FWD_SPEED 20 // Default forward speed should be 30
+#define FWD_SPEED 40 // Default forward speed should be 30
 #define THETA_FWD 45 // straight angle (zero/forward)
 #define HISTORY_LENGTH 10
 #define SERVO_CAL 40
@@ -41,7 +45,7 @@ typedef struct {
     uint8_t right;
 } sensor_reading;
 
-void motor_dir(int16_t angle, int8_t *output);
+void motor_dir(int16_t angle, motor_command *output);
 void motor(uint8_t num, int8_t speed);
 void time_advance(u16 *array, u16 new_value);
 float calculate_vstate_vector(u08 vbl_set, u08 sensor_0, u08 vbr_set, u08 sensor_1);
@@ -58,6 +62,7 @@ void debug(char *string, u16 value);
 uint8_t map_float_to_servo_int(float input_value);
 float map_servo_int_to_float(uint8_t input_value);
 float map_sensor_reading_to_float(u08 left);
+void stop_motor();
 
 
 #endif //LOCAL_V2_PROPORTIONAL_H
