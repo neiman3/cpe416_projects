@@ -227,7 +227,7 @@ int main(void) {
             }
 
             right_encoder = 0;
-            encoder_target = 5;
+            encoder_target = 20;
             while(right_encoder < encoder_target || sensor_value[0] > LINE_THRESHOLD || sensor_value[1] > LINE_THRESHOLD) {
                 motor(MOTOR_L, FWD_SPEED);
                 motor(MOTOR_R, FWD_SPEED);
