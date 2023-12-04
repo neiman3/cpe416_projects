@@ -17,6 +17,7 @@ int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
     u08 sensor_value[2]; // sensor values array
 
     point_servo(sweep_start);
+    _delay_ms(SCAN_TIMESTEP);
     for (int16_t i=SWEEP_ANGLE_MIN;i<=SWEEP_ANGLE_MAX;i+=SCAN_ANGLESTEP){
         servo_direction = i * scan_direction; // Symmetrical scan only- update for custom start stop
         point_servo(servo_direction);
@@ -30,12 +31,15 @@ int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
         if (sensor_value[0] > threshold_value || sensor_value[1] > threshold_value) {
             return BOUNDARY_WARNING;  // return code for line boundary warning
         }
-
         _delay_ms(SCAN_TIMESTEP);
         scan_result = analog(PIN_SENSOR_DIST);
+        // lcd_cursor(4,0);print_signed(scan_result);print_string("   ");
+        // lcd_cursor(4,1);print_signed(servo_direction);print_string("   ");
         if (scan_result > magnitude) {
             magnitude = scan_result;
             angle = servo_direction;
+            // lcd_cursor(0,0);print_signed(magnitude);print_string("   ");
+            // lcd_cursor(0,1);print_signed(angle);print_string("   ");
         }
     }
 

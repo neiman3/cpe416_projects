@@ -31,6 +31,8 @@
 
 #define TIMESTEP        100
 
+#define DEBUG
+
 volatile uint16_t right_encoder = 0;
 
 // Rotary encoder ISR setup
@@ -78,7 +80,7 @@ int main(void) {
     lcd_cursor(0,1);print_string("Bot4i");
 
     for (uint8_t i=0;i<255;i++){
-        _delay_ms(1);
+        _delay_ms(4);
     }
 
     int16_t target = 0;
@@ -87,10 +89,30 @@ int main(void) {
     int16_t initial_target, delta_angle, encoder_target;
     int8_t turning_direction;
 
+    point_servo(0);
+    clear_screen();
+    lcd_cursor(0,0);print_string("Zero Deg");
+
+    while(!get_btn()) {
+        //wait
+    }
+
+    while(get_btn()) {
+        // wait
+    }
+
+    clear_screen();
+    lcd_cursor(0,1);print_string("ScanTest");
+
     while(!get_btn()) {
         lcd_cursor(0,0);
         print_signed(target);print_string("       ");
         target = scan(scan_dir, LINE_THRESHOLD);
+        _delay_ms(10);
+        _delay_ms(10);
+        _delay_ms(10);
+        _delay_ms(10);
+        _delay_ms(10);
         scan_dir = -scan_dir;
         
     }
@@ -182,16 +204,36 @@ int main(void) {
                 turning_direction = 1;
             }
             // backpedal for a bit
-            motor(MOTOR_L, -FWD_SPEED);
-            motor(MOTOR_R, -FWD_SPEED);
-            _delay_ms(200);
+            // motor(MOTOR_L, -FWD_SPEED);
+            // motor(MOTOR_R, -FWD_SPEED);
+            // _delay_ms(200);
             right_encoder = 0;
             encoder_target = 60;
+
+            // turn around 180º
+
             while(right_encoder < encoder_target) {
                 motor(MOTOR_L, turning_direction * FWD_SPEED * 2);
                 motor(MOTOR_R, turning_direction * -FWD_SPEED * 2);
                 _delay_ms(10);
             } 
+            
+            stop_motor();
+
+            // update sensor
+            for(u08 i=0;i<2;i++) {
+                // Read ADC value
+                sensor_value[i] = analog(sensor_pins[i]);;
+            }
+
+            right_encoder = 0;
+            encoder_target = 5;
+            while(right_encoder < encoder_target || sensor_value[0] > LINE_THRESHOLD || sensor_value[1] > LINE_THRESHOLD) {
+                motor(MOTOR_L, FWD_SPEED);
+                motor(MOTOR_R, FWD_SPEED);
+                _delay_ms(10);
+            }
+            stop_motor();
     }
 
     return 0;
