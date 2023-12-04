@@ -3,7 +3,7 @@
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Final project
+ *   Final project battle bot
  *
  **/
 
