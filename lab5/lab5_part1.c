@@ -159,11 +159,10 @@ int main(void) {
             motor(1, turning_direction * -FWD_SPEED * 2);
             _delay_ms(10);
         }
-        stop_motor();
-
-        // motor_dir(0, &mc);
-        // motor(MOTOR_L, mc.left);
-        // motor(MOTOR_R, mc.right);
+        motor(MOTOR_L, FWD_SPEED);
+        motor(MOTOR_R, FWD_SPEED);
+        _delay_ms(10);
+        
         do {
             target = scan(scan_dir, LINE_THRESHOLD);
             scan_dir = -scan_dir;
@@ -194,14 +193,14 @@ int main(void) {
                 lcd_cursor(0,0);print_string("Boundary");
                 lcd_cursor(0,1);print_string("Warn (L)");
 
-                turning_direction = -1;
+                turning_direction = 1;
             } else if (sensor_value[1] > LINE_THRESHOLD) {
                 // right sensor line - turn CCW
                 clear_screen();
                 lcd_cursor(0,0);
                 lcd_cursor(0,0);print_string("Boundary");
                 lcd_cursor(0,1);print_string("Warn (R)");
-                turning_direction = 1;
+                turning_direction = -1;
             }
             // backpedal for a bit
             // motor(MOTOR_L, -FWD_SPEED);
@@ -227,7 +226,7 @@ int main(void) {
             }
 
             right_encoder = 0;
-            encoder_target = 5;
+            encoder_target = 20;
             while(right_encoder < encoder_target || sensor_value[0] > LINE_THRESHOLD || sensor_value[1] > LINE_THRESHOLD) {
                 motor(MOTOR_L, FWD_SPEED);
                 motor(MOTOR_R, FWD_SPEED);

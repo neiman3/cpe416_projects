@@ -13,11 +13,12 @@ int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
     int16_t angle = 0;
     uint8_t scan_result;
     uint8_t magnitude = 0;
+    uint16_t delay_time;
     u08 sensor_pins[2] = {3,4}; // Analog pins that correspond to sensors to read
     u08 sensor_value[2]; // sensor values array
 
     point_servo(sweep_start);
-    _delay_ms(SCAN_TIMESTEP);
+
     for (int16_t i=SWEEP_ANGLE_MIN;i<=SWEEP_ANGLE_MAX;i+=SCAN_ANGLESTEP){
         servo_direction = i * scan_direction; // Symmetrical scan only- update for custom start stop
         point_servo(servo_direction);
@@ -31,7 +32,11 @@ int16_t scan(int8_t scan_direction, uint8_t threshold_value) {
         if (sensor_value[0] > threshold_value || sensor_value[1] > threshold_value) {
             return BOUNDARY_WARNING;  // return code for line boundary warning
         }
-        _delay_ms(SCAN_TIMESTEP);
+        // adaptive delay time
+        // maximum delay time of SCAN_TIMESTEP
+        // minimum delay time of SCAN_TIMESTEP_MIN
+        delay_time = SCAN_TIMESTEP_MIN + bound(SCAN_TIMESTEP_DIFF - (int16_t) magnitude * SCAN_TIMESTEP_DIFF / 160, 0, SCAN_TIMESTEP_DIFF);
+        delayms(delay_time);
         scan_result = analog(PIN_SENSOR_DIST);
         // lcd_cursor(4,0);print_signed(scan_result);print_string("   ");
         // lcd_cursor(4,1);print_signed(servo_direction);print_string("   ");
@@ -131,4 +136,10 @@ int16_t compound_angle_calculation(int16_t servo_position, int16_t encoder_value
     servo_angle = (int16_t) 45 * servo_position / (int16_t) 127;
     robot_angle = (int16_t) 90 * (int16_t) ( (int16_t) right_encoder - (int16_t) TICKS_TO_90_DEGREES_CONV ) / (int16_t)TICKS_TO_90_DEGREES_CONV;
     return robot_angle + servo_angle;
+}
+
+void delayms(uint16_t delay_time) {
+    for (uint16_t i=0; i<delay_time;i++){
+        _delay_ms(1);
+    }
 }
