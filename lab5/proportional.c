@@ -10,7 +10,7 @@
  *
  *   Name:  Alex Neiman and Beck Dehlsen
  *   CPE 416
- *   Lab 3 ANN training basis (can calculate target/training values)
+ *   Lab 5 Proportional control library
  *
  **/
 
@@ -120,64 +120,6 @@ int16_t integral_error(u16 *array, u16 setpoint) {
 int16_t derivative_error(u16 *array, u16 setpoint) {
     // return time derivative of (array minus error)
     return ((int16_t) setpoint - array[0]) - ((int16_t) setpoint - array[1]);
-}
-
-motor_command compute_proportional(u08 left_value, u08 right_value) {
-
-    u08 sensor_value[2] = {left_value, right_value};
-    int8_t output[2];
-
-    // control variables
-    int16_t theta_deg = 0; // proportiona
-    // int16_t theta_deg_d = 0; // derivative
-    // int16_t theta_deg_i = 0; // integral
-
-    u08 VWL_set = VWL;
-    u08 VWR_set = VWR;
-    u08 VBL_set = VBL;
-    u08 VBR_set = VBR;
-    u08 VSTATE_B_B_set = VSTATE_B_B;
-    u08 VSTATE_W_W_set = VSTATE_W_W;
-
-
-
-    float theta;
-    // bound
-    sensor_value[0] = bound(sensor_value[0], VWL_set, 255);
-    sensor_value[1] = bound(sensor_value[1], VWR_set, 255);
-
-
-    // calculate 2d mapping transformation of angular difference of sensor reading
-    theta = calculate_theta(sensor_value[0], VWL_set, sensor_value[1], VWR_set);
-    theta_deg = proportional_error(theta, THETA_FWD);
-    // theta_deg_i = integral_error(theta_deg_history, THETA_FWD);
-
-    // calculate vstate vector magnitude to determine black, white, etc
-    float vstate;
-    vstate = calculate_vstate_vector(VBL_set, sensor_value[0], VBR_set, sensor_value[1]);
-
-
-    if(vstate < VSTATE_B_B_set) {
-        // black on black or tape crossing
-        // go forward blindly
-        // OUTPUT MOTOR DIR 0
-        #ifndef LOCAL
-        motor_dir(0, output);
-        #endif
-
-    } else if (vstate > VSTATE_W_W_set) {    // outside threshold for proportional control - 1 value too low (black-white case)
-        //        // neither sensor reading the tape (white-white case)
-        // spin in the direction of side_last_found
-
-        // OUTPUT MOTOR DIR SPIN LEFT ONLY
-        output[0] = 0;
-        output[1] = FWD_SPEED;
-
-    } else {
-        motor_dir(((int16_t) theta_deg) * GAIN_KP_NUM / GAIN_KP_DEN, output);
-    }
-    motor_command result = {output[0], output[1]};
-    return result;
 }
 
 uint8_t map_float_to_servo_int(float input_value) {

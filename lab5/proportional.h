@@ -1,6 +1,13 @@
-//
-// Header file for proportional.c
-//
+/**
+ *
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Final project battle bot
+ *      Task: Scan, seek, and pursue the closest object.
+ *            Don't fall off the board.
+ *
+ **/
 
 #ifndef LOCAL_V2_PROPORTIONAL_H
 #define LOCAL_V2_PROPORTIONAL_H
@@ -29,7 +36,7 @@
 #define GAIN_KD_NUM 10
 #define GAIN_KD_DEN 10
 
-#define FWD_SPEED 40 // Default forward speed should be 30
+#define FWD_SPEED 60 // Default forward speed should be 30
 #define THETA_FWD 45 // straight angle (zero/forward)
 #define HISTORY_LENGTH 10
 #define SERVO_CAL 40

@@ -1,3 +1,12 @@
+/**
+ *
+ *
+ *   Name:  Alex Neiman and Beck Dehlsen
+ *   CPE 416
+ *   Final project battle bot
+ *
+ **/
+
 #include "../library/globals.h"
 #include <math.h>
 #include "proportional.h"
@@ -10,7 +19,7 @@
 
 #define SCAN_ANGLESTEP 1
 #define SCAN_TIMESTEP_MAX 5
-#define SCAN_TIMESTEP_MIN 2
+#define SCAN_TIMESTEP_MIN 1
 #define SCAN_TIMESTEP_DIFF (int16_t) ( (int16_t) SCAN_TIMESTEP_MAX - (int16_t) SCAN_TIMESTEP_MIN )
 
 #define SCAN_ANGLE_WIDTH 20
@@ -21,13 +30,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-
-// Board object model
-typedef struct
-{
-    uint16_t theta;
-    uint8_t magnitude;
-} object;
 
 int16_t scan(int8_t scan_direction, uint8_t threshold_value);
 int16_t full_scan();
