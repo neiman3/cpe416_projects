@@ -31,7 +31,6 @@
 
 #define TIMESTEP        100
 
-#define DEBUG
 
 volatile uint16_t right_encoder = 0;
 
@@ -79,6 +78,8 @@ int main(void) {
     lcd_cursor(0,0);print_string("BigFang");
     lcd_cursor(0,1);print_string("Bot4i");
 
+    point_servo(0);
+
     for (uint8_t i=0;i<255;i++){
         _delay_ms(4);
     }
@@ -87,11 +88,7 @@ int main(void) {
     int8_t scan_dir=-1;
     motor_command mc;
     int16_t initial_target, delta_angle, encoder_target;
-    int8_t turning_direction;
-
-    point_servo(0);
-    clear_screen();
-    lcd_cursor(0,0);print_string("Zero Deg");
+    int16_t turning_direction;
 
     while(!get_btn()) {
         //wait
@@ -100,23 +97,6 @@ int main(void) {
     while(get_btn()) {
         // wait
     }
-
-    clear_screen();
-    lcd_cursor(0,1);print_string("ScanTest");
-
-    while(!get_btn()) {
-        lcd_cursor(0,0);
-        print_signed(target);print_string("       ");
-        target = scan(scan_dir, LINE_THRESHOLD);
-        _delay_ms(10);
-        _delay_ms(10);
-        _delay_ms(10);
-        _delay_ms(10);
-        _delay_ms(10);
-        scan_dir = -scan_dir;
-        
-    }
-    
 
     /* Pursue the target */
     while(1) {
@@ -193,14 +173,14 @@ int main(void) {
                 lcd_cursor(0,0);print_string("Boundary");
                 lcd_cursor(0,1);print_string("Warn (L)");
 
-                turning_direction = 1;
+                turning_direction = -1;
             } else if (sensor_value[1] > LINE_THRESHOLD) {
                 // right sensor line - turn CCW
                 clear_screen();
                 lcd_cursor(0,0);
                 lcd_cursor(0,0);print_string("Boundary");
                 lcd_cursor(0,1);print_string("Warn (R)");
-                turning_direction = -1;
+                turning_direction = 1;
             }
             // backpedal for a bit
             // motor(MOTOR_L, -FWD_SPEED);
